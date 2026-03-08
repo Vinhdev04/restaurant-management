@@ -1,0 +1,69 @@
+@use '@styles/css/variable.module.scss' as *;
+/* ==============================
+    Mixin margin
+ ============================== */
+@mixin margin($t, $r, $b, $l) {
+    margin-top: $t;
+    margin-right: $r;
+    margin-bottom: $b;
+    margin-left: $l;
+}
+
+/* ==============================
+    Mixin padding
+ ============================== */
+@mixin padding($t, $r, $b, $l) {
+    padding-top: $t;
+    padding-right: $r;
+    padding-bottom: $b;
+    padding-left: $l;
+}
+/* ==============================
+     Mixin box shadow
+ ============================== */
+@mixin boxShadow($x,$y,$blur,$color){
+    box-shadow: $x $y $blur $color;
+}
+
+/* ==============================
+     Mixin radius
+ ============================== */
+@mixin borderRadius($radius: 10px){
+    border-radius: $radius;
+}
+
+/* ==============================
+    Mixin background
+ ============================== */
+ @mixin background($color) {
+    background-color: $color;
+}
+
+
+/* ==============================
+    Mixin background
+ ============================== */
+ @mixin background($color) {
+    background-color: $color;
+}
+
+
+/* ==============================
+    Mixin size image
+ ============================== */
+@mixin size_img($w, $h, $obj: cover) {
+    width: $w;
+    height: $h;
+    object-fit: $obj;
+}
+
+/* ==============================
+    Mixin position 
+ ============================== */
+@mixin position_sticky($top, $right, $bottom, $left) {
+    position: sticky;
+    top: $top;
+    right: $right;
+    bottom: $bottom;
+    left: $left;
+}
