@@ -1,16 +1,13 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+frontend/src/
+├── assets/             # Hình ảnh món ăn & Icon hệ thống
+├── components/         # UI dùng chung (Button, Modal, Navbar)
+├── constants/          # Trạng thái (PENDING, COOKING, DONE) [cite: 27, 28]
+├── hooks/              # Custom hooks để xử lý Socket & API
+├── pages/              # Giao diện riêng cho từng Actor 
+│   ├── Admin/          # Quản lý Menu, Nhân sự, Báo cáo [cite: 21, 22]
+│   ├── Chef/           # Màn hình tiếp nhận & Cập nhật món [cite: 26, 27]
+│   ├── Staff/          # Quản lý sơ đồ bàn & Thanh toán [cite: 33, 37]
+│   └── Customer/       # Menu gọi món & Theo dõi trạng thái [cite: 39, 40]
+├── services/           # Axios/API calls cho từng phân hệ
+├── store/              # Quản lý trạng thái (Redux/Zustand) cho Giỏ hàng, User
+└── App.jsx
