@@ -1,38 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.scss';
-
+import { quickLinks, adminLinks, socialLinks } from '@constants/footerConst';
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  const quickLinks = [
-    { name: 'Trang chủ', path: '/' },
-    { name: 'Thực đơn', path: '/menu' },
-    { name: 'Đặt bàn', path: '/reservation' },
-    { name: 'Về chúng tôi', path: '/about' }
-  ];
 
-  const adminLinks = [
-    { name: 'Dashboard', path: '/admin/dashboard' },
-    { name: 'Quản lý đơn hàng', path: '/admin/orders' },
-    { name: 'Quản lý bàn', path: '/admin/tables' },
-    { name: 'Báo cáo', path: '/admin/reports' }
-  ];
-
-  const socialLinks = [
-    { name: 'Facebook', icon: 'facebook', url: '#', color: '#1877F2' },
-    { name: 'Instagram', icon: 'instagram', url: '#', color: '#E4405F' },
-    { name: 'Twitter', icon: 'twitter', url: '#', color: '#1DA1F2' },
-    { name: 'YouTube', icon: 'youtube', url: '#', color: '#FF0000' }
-  ];
 
   return (
     <footer className={styles.footer}>
-      {/* Main Footer Content */}
+
       <div className={styles.footerMain}>
         <div className={styles.footerContainer}>
           <div className={styles.footerGrid}>
-            {/* Brand Section */}
+          
             <div className={styles.footerBrand}>
               <div className={styles.brandLogo}>
                 <div className={styles.brandIcon}>
@@ -62,7 +43,7 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Quick Links */}
+          
             <div className={styles.footerColumn}>
               <h4 className={styles.columnTitle}>Liên kết nhanh</h4>
               <ul className={styles.linkList}>
@@ -77,7 +58,7 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Admin Links */}
+          
             <div className={styles.footerColumn}>
               <h4 className={styles.columnTitle}>Quản lý</h4>
               <ul className={styles.linkList}>
@@ -92,7 +73,7 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Contact Info */}
+          
             <div className={styles.footerColumn}>
               <h4 className={styles.columnTitle}>Liên hệ</h4>
               <div className={styles.contactInfo}>
@@ -131,7 +112,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Footer Bottom */}
+    
       <div className={styles.footerBottom}>
         <div className={styles.footerContainer}>
           <div className={styles.footerBottomContent}>

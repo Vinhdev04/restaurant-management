@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
-
+import { navigationItems } from '@constants/headerConst';
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -25,36 +25,7 @@ const Header = () => {
     setActiveDropdown(activeDropdown === menu ? null : menu);
   };
 
-  const navigationItems = [
-    { name: 'Trang chủ', path: '/', icon: '🏠' },
-    { 
-      name: 'Thực đơn', 
-      path: '/menu',
-      icon: '📋',
-      dropdown: [
-        { name: 'Khai vị', path: '/menu/appetizers' },
-        { name: 'Món chính', path: '/menu/main-dishes' },
-        { name: 'Đồ uống', path: '/menu/beverages' },
-        { name: 'Tráng miệng', path: '/menu/desserts' }
-      ]
-    },
-    { 
-      name: 'Đặt bàn', 
-      path: '/reservation',
-      icon: '🍽️'
-    },
-    { 
-      name: 'Quản lý', 
-      path: '/admin',
-      icon: '⚙️',
-      dropdown: [
-        { name: 'Dashboard', path: '/admin/dashboard' },
-        { name: 'Đơn hàng', path: '/admin/orders' },
-        { name: 'Bàn ăn', path: '/admin/tables' },
-        { name: 'Báo cáo', path: '/admin/reports' }
-      ]
-    }
-  ];
+ 
 
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>

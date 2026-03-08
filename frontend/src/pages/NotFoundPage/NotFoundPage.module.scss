@@ -1,0 +1,649 @@
+@use '@styles/css/variable.module.scss' as *;
+@use '@styles/css/mixin.module.scss' as *;
+
+// ============================================
+// 404 NOT FOUND PAGE STYLES
+// Creative, playful design with animations
+// ============================================
+
+.notFoundPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl $spacing-lg;
+  position: relative;
+  overflow: hidden;
+  background: $bg-secondary;
+}
+
+// ============================================
+// BACKGROUND EFFECTS
+// ============================================
+
+.background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.gradientOrb {
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, 
+    rgba($primary-terracotta, 0.15), 
+    rgba($primary-amber, 0.1), 
+    transparent
+  );
+  border-radius: $radius-full;
+  filter: blur(60px);
+  animation: orbPulse 8s ease-in-out infinite;
+  transition: transform 0.3s ease-out;
+}
+
+@keyframes orbPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba($border-light, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba($border-light, 0.5) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.3;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+// ============================================
+// FLOATING ITEMS
+// ============================================
+
+.floatingItems {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.floatingItem {
+  position: absolute;
+  font-size: 48px;
+  animation: float 8s ease-in-out infinite;
+  opacity: 0.4;
+
+  &:nth-child(even) {
+    animation-direction: reverse;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-30px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-60px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(-30px) rotate(3deg);
+  }
+}
+
+// ============================================
+// MAIN CONTAINER
+// ============================================
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+// ============================================
+// ERROR VISUAL (404 with Plate)
+// ============================================
+
+.errorVisual {
+  margin-bottom: $spacing-xxl;
+  position: relative;
+  animation: fadeInScale 0.8s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.errorNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-lg;
+  font-family: $font-heading;
+  font-size: 180px;
+  font-weight: 700;
+  color: $primary-terracotta;
+  line-height: 1;
+  margin-bottom: $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 120px;
+    gap: $spacing-md;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: 80px;
+  }
+}
+
+.digit {
+  animation: digitBounce 1s ease-in-out infinite;
+  display: inline-block;
+
+  &:first-child {
+    animation-delay: 0.1s;
+  }
+
+  &:last-child {
+    animation-delay: 0.3s;
+  }
+}
+
+@keyframes digitBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.plateWrapper {
+  position: relative;
+  display: inline-block;
+  animation: digitBounce 1s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+
+.plate {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, $bg-primary, $accent-cream);
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: $shadow-lg;
+  position: relative;
+  animation: plateRotate 4s ease-in-out infinite;
+
+  @media (max-width: $breakpoint-md) {
+    width: 150px;
+    height: 150px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100px;
+    height: 100px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 10%;
+    border: 3px dashed rgba($primary-terracotta, 0.3);
+    border-radius: $radius-full;
+    animation: borderRotate 8s linear infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    border: 2px solid rgba($primary-amber, 0.2);
+    border-radius: $radius-full;
+    animation: borderRotate 6s linear infinite reverse;
+  }
+}
+
+@keyframes plateRotate {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(10deg) scale(1.05);
+  }
+}
+
+@keyframes borderRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.plateInner {
+  position: relative;
+  z-index: 1;
+}
+
+.zeroIcon {
+  font-size: 80px;
+  display: block;
+  animation: iconBounce 2s ease-in-out infinite;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 60px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: 40px;
+  }
+}
+
+@keyframes iconBounce {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+// Utensils (Fork & Knife)
+.utensils {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-xxl;
+  margin-top: $spacing-lg;
+
+  @media (max-width: $breakpoint-sm) {
+    gap: $spacing-xl;
+  }
+}
+
+.fork, .knife {
+  font-size: 64px;
+  animation: utensilFloat 2s ease-in-out infinite;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 48px;
+  }
+}
+
+.fork {
+  animation-delay: 0.2s;
+  transform-origin: top center;
+}
+
+.knife {
+  animation-delay: 0.4s;
+  transform-origin: top center;
+}
+
+@keyframes utensilFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(10deg);
+  }
+}
+
+// ============================================
+// ERROR CONTENT
+// ============================================
+
+.errorContent {
+  animation: fadeInUp 0.8s ease-out 0.3s backwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.errorTitle {
+  font-family: $font-heading;
+  font-size: 48px;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: 36px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: 28px;
+  }
+}
+
+.errorDescription {
+  font-family: $font-body;
+  font-size: $fs-lg;
+  color: $text-secondary;
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 0 auto $spacing-xl;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: $fs-base;
+  }
+}
+
+// ============================================
+// COUNTDOWN TIMER
+// ============================================
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xxl;
+}
+
+.countdownCircle {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.countdownSvg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+.countdownTrack {
+  fill: none;
+  stroke: $border-light;
+  stroke-width: 8;
+}
+
+.countdownProgress {
+  fill: none;
+  stroke: url(#gradient);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.countdownNumber {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: $font-heading;
+  font-size: 36px;
+  font-weight: 700;
+  color: $primary-terracotta;
+}
+
+.countdownText {
+  font-family: $font-accent;
+  font-size: $fs-sm;
+  color: $text-secondary;
+  font-weight: 500;
+}
+
+// ============================================
+// SUGGESTIONS
+// ============================================
+
+.suggestions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.suggestionCard {
+  background: $bg-primary;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  border: 2px solid transparent;
+  transition: all $transition-normal;
+  animation: fadeInUp 0.6s ease-out backwards;
+
+  &:hover {
+    border-color: $primary-terracotta;
+    transform: translateY(-8px);
+    box-shadow: $shadow-lg;
+
+    .suggestionIcon {
+      transform: scale(1.2) rotate(10deg);
+    }
+
+    .suggestionArrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+.suggestionIcon {
+  font-size: 48px;
+  transition: transform $transition-normal;
+}
+
+.suggestionContent {
+  text-align: center;
+  flex: 1;
+}
+
+.suggestionTitle {
+  font-family: $font-accent;
+  font-size: $fs-base;
+  font-weight: 700;
+  color: $text-primary;
+  margin-bottom: 4px;
+}
+
+.suggestionDescription {
+  font-size: $fs-sm;
+  color: $text-secondary;
+}
+
+.suggestionArrow {
+  color: $primary-terracotta;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all $transition-normal;
+}
+
+// ============================================
+// ACTION BUTTONS
+// ============================================
+
+.actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: linear-gradient(135deg, $primary-terracotta, $primary-amber);
+  color: $text-light;
+  font-family: $font-accent;
+  font-size: $fs-base;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  transition: all $transition-normal;
+  border: none;
+  cursor: pointer;
+
+  svg {
+    transition: transform $transition-fast;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba($primary-terracotta, 0.3);
+
+    svg {
+      transform: scale(1.1);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: $bg-primary;
+  color: $text-primary;
+  font-family: $font-accent;
+  font-size: $fs-base;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid $border-light;
+  border-radius: $radius-lg;
+  transition: all $transition-fast;
+  cursor: pointer;
+
+  svg {
+    transition: transform $transition-fast;
+  }
+
+  &:hover {
+    background: $accent-cream;
+    border-color: $primary-terracotta;
+    color: $primary-terracotta;
+    transform: translateY(-2px);
+
+    svg {
+      transform: translateX(-4px);
+    }
+  }
+}
+
+// ============================================
+// DECORATIVE ELEMENTS
+// ============================================
+
+.decorations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.decoration {
+  position: absolute;
+  font-size: 32px;
+  animation: twinkle 2s ease-in-out infinite;
+
+  &:nth-child(1) { animation-delay: 0s; }
+  &:nth-child(2) { animation-delay: 0.5s; }
+  &:nth-child(3) { animation-delay: 1s; }
+  &:nth-child(4) { animation-delay: 1.5s; }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+// ============================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================
+
+@media (max-width: $breakpoint-md) {
+  .notFoundPage {
+    padding: $spacing-lg $spacing-md;
+  }
+
+  .errorVisual {
+    margin-bottom: $spacing-xl;
+  }
+
+  .countdown {
+    margin-bottom: $spacing-xl;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .floatingItem {
+    font-size: 32px;
+  }
+
+  .decoration {
+    font-size: 24px;
+  }
+}
+
+// ============================================
+// ACCESSIBILITY & ANIMATIONS
+// ============================================
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
