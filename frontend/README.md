@@ -11,3 +11,15 @@ frontend/src/
 ├── services/           # Axios/API calls cho từng phân hệ
 ├── store/              # Quản lý trạng thái (Redux/Zustand) cho Giỏ hàng, User
 └── App.jsx
+---
+
+frontend/src/pages/Admin/
+├── Dashboard/
+│   ├── Overview.jsx         # Thẻ chỉ số & Biểu đồ doanh thu 
+│   ├── MenuManagement.jsx   # CRUD món ăn & phân loại 
+│   ├── TableManagement.jsx  # Khởi tạo sơ đồ bàn/khu vực 
+│   └── StaffManagement.jsx  # Quản lý tài khoản & phân quyền 
+├── components/
+│   ├── StatCard.jsx         # Component hiển thị số liệu nhanh
+│   ├── RevenueChart.jsx     # Component biểu đồ (Recharts/Chart.js)
+│   └── MenuTable.jsx        # Bảng danh sách món ăn

@@ -18,3 +18,15 @@ backend/
 │   ├── utils/              # Hàm hỗ trợ (Tính điểm, Format tiền) [cite: 7, 13]
 │   └── server.js           # File chạy chính [cite: 8, 13]
 └── .env                    # Biến môi trường (DB_URI, JWT_SECRET) [cite: 8, 14]
+---
+backend/src/
+├── controllers/
+│   └── admin.controller.js  # Điều hướng yêu cầu từ Dashboard [cite: 2, 10]
+├── services/
+│   ├── menuService.js       # Logic xử lý món ăn [cite: 3, 10]
+│   ├── tableService.js      # Logic tạo bàn/khu vực [cite: 2, 10]
+│   └── reportService.js     # Logic tính toán doanh thu/thống kê 
+├── models/
+│   ├── Menu.model.js        # Schema món ăn [cite: 5, 11]
+│   ├── Table.model.js       # Schema bàn ăn [cite: 5, 11]
+│   └── User.model.js        # Schema nhân sự [cite: 4, 11]
