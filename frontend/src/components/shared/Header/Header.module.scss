@@ -1,0 +1,617 @@
+@use '@styles/css/variable.module.scss' as *;
+
+// ============================================
+// HEADER COMPONENT STYLES
+// Warm, sophisticated restaurant aesthetic
+// ============================================
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-sticky;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: all $transition-normal;
+  box-shadow: none;
+
+  &.scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom-color: $border-light;
+    box-shadow: $shadow-sm;
+  }
+}
+
+.headerContainer {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-lg;
+}
+
+// ============================================
+// LOGO SECTION
+// ============================================
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  text-decoration: none;
+  transition: transform $transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+
+    .logoIcon {
+      transform: rotate(5deg) scale(1.05);
+    }
+  }
+}
+
+.logoIcon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, $primary-terracotta, $primary-amber);
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: $shadow-md;
+  transition: transform $transition-normal;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.2) 0%, 
+      transparent 50%, 
+      rgba(0, 0, 0, 0.1) 100%
+    );
+  }
+}
+
+.logoIconInner {
+  font-size: 24px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logoTitle {
+  font-family: $font-heading;
+  font-size: $fs-xl;
+  font-weight: 700;
+  color: $primary-terracotta;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.logoSubtitle {
+  font-family: $font-accent;
+  font-size: $fs-xs;
+  font-weight: 500;
+  color: $text-secondary;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+// ============================================
+// DESKTOP NAVIGATION
+// ============================================
+
+.navDesktop {
+  display: none;
+
+  @media (min-width: $breakpoint-lg) {
+    display: block;
+  }
+}
+
+.navList {
+  display: flex;
+  gap: $spacing-xs;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  position: relative;
+
+  &.hasDropdown {
+    .navLink {
+      padding-right: $spacing-md;
+    }
+  }
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  font-family: $font-accent;
+  font-size: $fs-sm;
+  font-weight: 600;
+  color: $text-primary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, $accent-cream, $bg-secondary);
+    opacity: 0;
+    transition: opacity $transition-fast;
+  }
+
+  &:hover {
+    color: $primary-terracotta;
+    
+    &::before {
+      opacity: 1;
+    }
+
+    .navIcon {
+      transform: scale(1.2) rotate(5deg);
+    }
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.navIcon {
+  font-size: $fs-md;
+  transition: transform $transition-fast;
+}
+
+.navText {
+  // No additional styles needed
+}
+
+.navArrow {
+  font-size: 10px;
+  margin-left: 4px;
+  transition: transform $transition-fast;
+
+  .navItem:hover & {
+    transform: rotate(180deg);
+  }
+}
+
+// ============================================
+// DROPDOWN MENU
+// ============================================
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 200px;
+  background: $bg-primary;
+  border: 1px solid $border-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all $transition-fast;
+  overflow: hidden;
+
+  &.dropdownActive {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 24px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid $bg-primary;
+  }
+}
+
+.dropdownList {
+  list-style: none;
+  margin: 0;
+  padding: $spacing-xs;
+}
+
+.dropdownItem {
+  // No additional styles needed
+}
+
+.dropdownLink {
+  display: block;
+  padding: $spacing-sm $spacing-md;
+  font-family: $font-body;
+  font-size: $fs-sm;
+  color: $text-primary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: linear-gradient(135deg, 
+      rgba($primary-terracotta, 0.08), 
+      rgba($primary-amber, 0.08)
+    );
+    color: $primary-terracotta;
+    padding-left: calc($spacing-md + 8px);
+  }
+}
+
+// ============================================
+// HEADER ACTIONS
+// ============================================
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.btnNotification {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  background: $bg-secondary;
+  border: none;
+  border-radius: $radius-full;
+  cursor: pointer;
+  transition: all $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: $accent-cream;
+    transform: scale(1.05);
+
+    .notificationIcon {
+      animation: bellRing 0.5s ease;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.notificationIcon {
+  font-size: $fs-md;
+}
+
+.notificationBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: linear-gradient(135deg, #FF6B6B, #FF4757);
+  color: $text-light;
+  font-size: $fs-xs;
+  font-weight: 700;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  animation: badgePulse 2s ease infinite;
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0deg); }
+  10%, 30% { transform: rotate(-15deg); }
+  20%, 40% { transform: rotate(15deg); }
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.userProfile {
+  display: none;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 6px 12px;
+  background: $bg-secondary;
+  border-radius: $radius-full;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  @media (min-width: $breakpoint-md) {
+    display: flex;
+  }
+
+  &:hover {
+    background: $accent-cream;
+    box-shadow: $shadow-sm;
+  }
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  border: 2px solid $primary-terracotta;
+  object-fit: cover;
+}
+
+.userName {
+  font-family: $font-accent;
+  font-size: $fs-sm;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+// ============================================
+// MOBILE MENU TOGGLE
+// ============================================
+
+.mobileMenuToggle {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: $radius-md;
+  transition: background $transition-fast;
+
+  @media (min-width: $breakpoint-lg) {
+    display: none;
+  }
+
+  &:hover {
+    background: $bg-secondary;
+  }
+
+  &.active {
+    .hamburgerLine {
+      &:nth-child(1) {
+        transform: rotate(45deg) translateY(10px);
+      }
+
+      &:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      &:nth-child(3) {
+        transform: rotate(-45deg) translateY(-10px);
+      }
+    }
+  }
+}
+
+.hamburgerLine {
+  width: 100%;
+  height: 3px;
+  background: $primary-terracotta;
+  border-radius: $radius-full;
+  transition: all $transition-normal;
+}
+
+// ============================================
+// MOBILE NAVIGATION
+// ============================================
+
+.mobileNav {
+  position: fixed;
+  top: 85px;
+  right: 0;
+  width: 280px;
+  max-height: calc(100vh - 85px);
+  background: $bg-primary;
+  border-left: 1px solid $border-light;
+  box-shadow: $shadow-lg;
+  transform: translateX(100%);
+  transition: transform $transition-normal;
+  overflow-y: auto;
+  z-index: $z-fixed;
+
+  &.mobileNavOpen {
+    transform: translateX(0);
+  }
+}
+
+.mobileNavList {
+  list-style: none;
+  margin: 0;
+  padding: $spacing-md;
+}
+
+.mobileNavItem {
+  margin-bottom: $spacing-xs;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.mobileNavLinkWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.mobileNavLink {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  font-family: $font-accent;
+  font-size: $fs-base;
+  font-weight: 600;
+  color: $text-primary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: linear-gradient(135deg, 
+      rgba($primary-terracotta, 0.08), 
+      rgba($primary-amber, 0.08)
+    );
+    color: $primary-terracotta;
+  }
+}
+
+.mobileNavIcon {
+  font-size: $fs-xl;
+}
+
+.mobileNavText {
+  // No additional styles needed
+}
+
+.mobileDropdownToggle {
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-md;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $bg-secondary;
+  }
+}
+
+.mobileArrow {
+  font-size: $fs-xs;
+  color: $text-secondary;
+  transition: transform $transition-fast;
+
+  &.mobileArrowOpen {
+    transform: rotate(180deg);
+  }
+}
+
+.mobileDropdown {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height $transition-normal;
+
+  &.mobileDropdownOpen {
+    max-height: 300px;
+  }
+}
+
+.mobileDropdownList {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 $spacing-xl;
+}
+
+.mobileDropdownItem {
+  margin-bottom: $spacing-xs;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.mobileDropdownLink {
+  display: block;
+  padding: $spacing-sm $spacing-md;
+  font-family: $font-body;
+  font-size: $fs-sm;
+  color: $text-secondary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  border-left: 2px solid transparent;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: $bg-secondary;
+    color: $primary-terracotta;
+    border-left-color: $primary-terracotta;
+    padding-left: calc($spacing-md + 8px);
+  }
+}
+
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: calc($z-fixed - 1);
+  animation: fadeIn $transition-fast;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// ============================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================
+
+@media (max-width: $breakpoint-md) {
+  .headerContainer {
+    padding: $spacing-md $spacing-md;
+  }
+
+  .logoTitle {
+    font-size: $fs-lg;
+  }
+
+  .logoIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logoIconInner {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .headerContainer {
+    padding: $spacing-sm $spacing-md;
+  }
+
+  .logoSubtitle {
+    display: none;
+  }
+}

@@ -1,0 +1,481 @@
+@use '@styles/css/variable.module.scss' as *;
+
+// ============================================
+// FOOTER COMPONENT STYLES
+// Warm, inviting restaurant footer
+// ============================================
+
+.footer {
+  position: relative;
+  background: linear-gradient(180deg, 
+    $bg-dark 0%, 
+    lighten($bg-dark, 5%) 100%
+  );
+  color: $text-light;
+  margin-top: $spacing-xxl;
+  overflow: hidden;
+}
+
+// ============================================
+// DECORATIVE PATTERN
+// ============================================
+
+.decorativePattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, 
+    $primary-terracotta 0%, 
+    $primary-amber 25%, 
+    $accent-gold 50%, 
+    $primary-amber 75%, 
+    $primary-terracotta 100%
+  );
+  background-size: 200% 100%;
+  animation: patternShift 8s linear infinite;
+}
+
+@keyframes patternShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+// ============================================
+// MAIN FOOTER CONTENT
+// ============================================
+
+.footerMain {
+  padding: $spacing-xxl 0 $spacing-xl;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba($primary-terracotta, 0.3) 50%, 
+      transparent 100%
+    );
+  }
+}
+
+.footerContainer {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: $spacing-xl;
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  }
+}
+
+// ============================================
+// BRAND SECTION
+// ============================================
+
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.brandLogo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
+}
+
+.brandIcon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, $primary-terracotta, $primary-amber);
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba($primary-terracotta, 0.3);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.2) 0%, 
+      transparent 50%, 
+      rgba(0, 0, 0, 0.1) 100%
+    );
+  }
+}
+
+.brandIconInner {
+  font-size: 28px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brandTitle {
+  font-family: $font-heading;
+  font-size: $fs-2xl;
+  font-weight: 700;
+  color: $text-light;
+  margin: 0;
+  line-height: 1;
+  background: linear-gradient(135deg, $text-light, rgba($text-light, 0.8));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brandSubtitle {
+  font-family: $font-accent;
+  font-size: $fs-xs;
+  font-weight: 500;
+  color: rgba($text-light, 0.6);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.brandDescription {
+  font-family: $font-body;
+  font-size: $fs-sm;
+  line-height: 1.6;
+  color: rgba($text-light, 0.7);
+  margin: 0;
+}
+
+// ============================================
+// SOCIAL LINKS
+// ============================================
+
+.socialLinks {
+  display: flex;
+  gap: $spacing-sm;
+  margin-top: $spacing-xs;
+}
+
+.socialLink {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba($text-light, 0.7);
+  font-size: $fs-md;
+  text-decoration: none;
+  transition: all $transition-fast;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--social-color, $primary-terracotta);
+    opacity: 0;
+    transition: opacity $transition-fast;
+  }
+
+  i {
+    position: relative;
+    z-index: 1;
+    transition: transform $transition-fast;
+  }
+
+  &:hover {
+    border-color: var(--social-color, $primary-terracotta);
+    color: $text-light;
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    &::before {
+      opacity: 1;
+    }
+
+    i {
+      transform: scale(1.2);
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+}
+
+// ============================================
+// FOOTER COLUMNS
+// ============================================
+
+.footerColumn {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.columnTitle {
+  font-family: $font-accent;
+  font-size: $fs-md;
+  font-weight: 700;
+  color: $text-light;
+  margin: 0 0 $spacing-xs;
+  padding-bottom: $spacing-sm;
+  border-bottom: 2px solid $primary-terracotta;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: $accent-gold;
+  }
+}
+
+// ============================================
+// LINK LISTS
+// ============================================
+
+.linkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.linkItem {
+  // No additional styles needed
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-family: $font-body;
+  font-size: $fs-sm;
+  color: rgba($text-light, 0.7);
+  text-decoration: none;
+  transition: all $transition-fast;
+  padding: 4px 0;
+
+  &:hover {
+    color: $primary-amber;
+    padding-left: $spacing-xs;
+
+    .linkArrow {
+      transform: translateX(4px);
+      color: $primary-amber;
+    }
+  }
+}
+
+.linkArrow {
+  color: $primary-terracotta;
+  font-size: $fs-sm;
+  transition: all $transition-fast;
+}
+
+.linkText {
+  // No additional styles needed
+}
+
+// ============================================
+// CONTACT INFO
+// ============================================
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.contactItem {
+  display: flex;
+  gap: $spacing-sm;
+  align-items: flex-start;
+}
+
+.contactIcon {
+  width: 36px;
+  height: 36px;
+  background: rgba($primary-terracotta, 0.15);
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $fs-md;
+  flex-shrink: 0;
+}
+
+.contactText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.contactLabel {
+  font-family: $font-accent;
+  font-size: $fs-xs;
+  font-weight: 600;
+  color: rgba($text-light, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.contactValue {
+  font-family: $font-body;
+  font-size: $fs-sm;
+  color: rgba($text-light, 0.8);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.contactLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $primary-amber;
+    text-decoration: underline;
+  }
+}
+
+// ============================================
+// FOOTER BOTTOM
+// ============================================
+
+.footerBottom {
+  background: rgba(0, 0, 0, 0.3);
+  padding: $spacing-md 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footerBottomContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.copyright {
+  font-family: $font-body;
+  font-size: $fs-sm;
+  color: rgba($text-light, 0.6);
+  margin: 0;
+
+  strong {
+    color: $primary-amber;
+    font-weight: 600;
+  }
+}
+
+.footerBottomLinks {
+  display: flex;
+  gap: $spacing-md;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bottomLink {
+  font-family: $font-body;
+  font-size: $fs-sm;
+  color: rgba($text-light, 0.6);
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $primary-amber;
+    text-decoration: underline;
+  }
+}
+
+.divider {
+  color: rgba($text-light, 0.3);
+  font-size: $fs-xs;
+}
+
+// ============================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================
+
+@media (max-width: $breakpoint-md) {
+  .footerMain {
+    padding: $spacing-xl 0 $spacing-lg;
+  }
+
+  .footerGrid {
+    gap: $spacing-lg;
+  }
+
+  .brandTitle {
+    font-size: $fs-xl;
+  }
+
+  .brandIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .brandIconInner {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .footerContainer {
+    padding: 0 $spacing-md;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .socialLinks {
+    justify-content: flex-start;
+  }
+
+  .footerBottomContent {
+    gap: $spacing-md;
+  }
+}
