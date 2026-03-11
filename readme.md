@@ -1,166 +1,90 @@
-🍽️ Restaurant Management System (RMS)
+# 🍽️ Restaurant Management System (RMS)
 
-Hệ thống số hóa quy trình vận hành nhà hàng toàn diện, kết nối trực tiếp trải nghiệm đặt món của Khách hàng với khu vực Bếp và quầy Thu ngân.
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![NodeJS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Sass](https://img.shields.io/badge/Sass-CC6699?style=for-the-badge&logo=sass&logoColor=white)](https://sass-lang.com/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 
+Hệ thống quản lý nhà hàng thông minh, hiện đại và tối ưu hóa quy trình vận hành toàn diện. Dự án tập trung vào trải nghiệm người dùng mượt mà, từ việc đặt món trực tuyến đến quản lý hệ thống phía Admin.
 
+---
 
-📌 Tổng quan dự án
+## ✨ Tính Năng Nổi Bật Đã Hoàn Thành
 
-Dự án được xây dựng nhằm tối ưu hóa việc quản lý không gian bàn ăn, giảm thiểu sai sót trong quá trình order và tăng tốc độ phục vụ thông qua hệ thống thông báo thời gian thực (Real-time).
+### 🎨 Giao diện & Trải nghiệm người dùng (UI/UX)
+- **Thiết kế Hiện đại**: Sử dụng phong cách thiết kế sang trọng với tông màu Terracotta chủ đạo.
+- **Responsive Design**: Tối ưu hóa hiển thị hoàn hảo trên mọi thiết bị (Mobile, Tablet, Desktop) thông qua hệ thống chuẩn hóa `responsive.module.scss`.
+- **Skeleton Loading**: Hiệu ứng tải trang mượt mà, chuyên nghiệp cho danh sách thực đơn.
+- **Promotion Popup**: Thông báo khuyến mãi tự động xuất hiện với hiệu ứng animation bắt mắt và thanh đếm ngược tự động đóng.
 
+### 🍱 Thực đơn thông minh (E-Menu)
+- **Phân loại đa dạng**: Hỗ trợ lọc món ăn theo danh mục (Khai vị, Món chính, Đồ uống, Tráng miệng).
+- **Infinity Scroll & Pagination**: Kết hợp cuộn vô hạn và phân trang để tối ưu trải nghiệm khám phá món ăn.
+- **Tùy chọn món ăn (Options)**: Cho phép khách hàng chọn thêm topping, mức độ cay, kích cỡ... với giá cập nhật thời gian thực.
+- **Gợi ý món ăn (Recommendations)**: Hệ thống tự động gợi ý các món dùng kèm phù hợp ngay trong form đặt món.
 
+### 📅 Đặt bàn & Đặt món trực tiếp
+- **Reservation System**: Trang đặt bàn chuyên nghiệp với đầy đủ thông tin khách hàng, thời gian và yêu cầu đặc biệt.
+- **Quick Order Modal**: Đặt món nhanh chóng thông qua cửa sổ Modal mà không cần chuyển trang.
+- **Real-time Calculation**: Tự động tính toán tổng hóa đơn bao gồm số lượng và các tùy chọn đi kèm.
 
-🛠 Công nghệ sử dụng
+### 🔐 Hệ thống Tài khoản
+- **Authentication**: Trang Đăng nhập và Đăng ký được thiết kế đẹp mắt, hỗ trợ điều hướng thông minh trên Navbar.
+- **User Roles**: Phân biệt trạng thái hiển thị giữa khách vãng lai và quản trị viên (Admin).
 
-Frontend: ReactJS, Tailwind CSS, Redux Toolkit (hoặc Zustand), Socket.io-client.
+---
 
+## 🛠 Công Nghệ Sử Dụng
 
+### Frontend
+- **Core**: ReactJS (Vite)
+- **Styling**: SCSS (Modules), Animation CSS3
+- **Routing**: React Router DOM v6
+- **Icons**: FontAwesome, Emoji Unicode
+- **Images**: Unsplash API (Demo data)
 
-Backend: NodeJS (Express), Socket.io, JWT Authentication.
+### Backend (Đang phát triển)
+- NodeJS, Express
+- MongoDB / PostgreSQL
+- Socket.io (Real-time updates)
 
+---
 
+## 📂 Cấu Trúc Thư Mục Chính
 
-Database: MongoDB (Mongoose) hoặc PostgreSQL.
+```text
+src/
+├── assets/          # Tài nguyên tĩnh (Styles, Images)
+├── components/      # Các component dùng chung (Modal, Header, Footer...)
+├── constants/       # Dữ liệu tĩnh và cấu hình
+├── pages/           # Các trang chính (Home, Menu, Reservation, Auth, Admin)
+├── routes/          # Cấu hình hệ thống định tuyến
+└── App.jsx          # Component gốc của ứng dụng
+```
 
+---
 
+## 🚀 Hướng Dẫn Cài Đặt
 
-Công cụ hỗ trợ: Postman, Docker (tùy chọn), Git.
+1. **Clone repository**:
+   ```bash
+   git clone https://github.com/Vinhdev04/restaurant-management.git
+   ```
 
-👥 Phân tích Actor \& Chức năng chính
+2. **Cài đặt dependencies**:
+   ```bash
+   cd restaurant-management/frontend
+   npm install
+   ```
 
-1\. Admin (Quản trị viên)
+3. **Chạy ứng dụng ở môi trường development**:
+   ```bash
+   npm run dev
+   ```
 
-Quản lý Thực đơn: Thêm/Sửa/Xóa món ăn, phân loại (Khai vị, Món chính, Đồ uống).
+---
 
+## 📝 Ghi Chú Phát Triển
+Dự án đang trong quá trình hoàn thiện các tính năng Backend và kết nối Real-time. Mọi đóng góp hoặc báo lỗi vui lòng tạo Issue trên GitHub.
 
-
-Quản lý Nhân sự: Cấp phát tài khoản và phân quyền cho Đầu bếp, Nhân viên.
-
-
-
-Sơ đồ Nhà hàng: Khởi tạo danh sách bàn, khu vực (VIP, Tầng 1, Tầng 2).
-
-
-
-Báo cáo: Thống kê doanh thu và món ăn bán chạy theo thời gian.
-
-
-
-2\. Đầu bếp (Chef)
-
-Tiếp nhận Order: Nhận danh sách món ăn thời gian thực từ khách hàng.
-
-
-
-Quản lý trạng thái: Cập nhật món (Đang nấu -> Hoàn thành).
-
-
-
-Sold Out: Đánh dấu món ăn đã hết hàng để hệ thống tự động khóa phía Khách hàng.
-
-
-
-3\. Nhân viên quản lý (Staff)
-
-Điều phối bàn: Mở bàn, Chuyển bàn, Ghép bàn khi khách có nhu cầu.
-
-
-
-Đặt bàn (Reservation): Ghi nhận thông tin khách và khóa trạng thái bàn.
-
-
-
-Thanh toán: Áp dụng mã giảm giá, chốt bill và in hóa đơn.
-
-
-
-4\. Khách hàng (Customer)
-
-Đặt món (E-Menu): Xem thực đơn qua QR Code, ghi chú món ăn.
-
-
-
-Theo dõi Real-time: Xem trạng thái món ăn của mình (Đang chờ -> Đang nấu -> Hoàn thành).
-
-
-
-🔄 Luồng quy trình nghiệp vụ (Business Flow)
-
-Khởi tạo: Nhân viên mở bàn hoặc Khách quét QR Code tại bàn.
-
-
-
-Order: Khách chọn món (Hệ thống chặn các món đã Sold Out).
-
-
-
-Chế biến: Order đẩy xuống Bếp qua Socket.io. Đầu bếp tiếp nhận và cập nhật trạng thái.
-
-
-
-Phục vụ: Nhân viên nhận thông báo món "Hoàn thành" để mang ra bàn.
-
-
-
-Kết thúc: Nhân viên thực hiện thanh toán, hệ thống giải phóng bàn về trạng thái "Trống".
-
-
-
-🚀 Hướng dẫn cài đặt
-
-Yêu cầu hệ thống
-
-Node.js >= 16.x
-
-
-
-MongoDB hoặc SQL Server tương ứng
-
-
-
-Các bước thực hiện
-
-Clone project:
-
-
-
-Bash
-
-git clone https://github.com/your-username/restaurant-management.git
-
-Cài đặt Backend:
-
-
-
-Bash
-
-cd backend
-
-npm install
-
-npm start
-
-Cài đặt Frontend:
-
-
-
-Bash
-
-cd frontend
-
-npm install
-
-npm start
-
-📝 Liên hệ
-
-Project Manager: \[Tên của bạn]
-
-
-
-Email: \[Email của bạn]
-
-
-
-Tài liệu: Xem chi tiết tại TÀI LIỆU NGHIỆP VỤ.docx kèm theo.
-
+**Phát triển bởi Vinhdev04** 🚀
