@@ -136,14 +136,16 @@ const HomePage = () => {
 
           <div className={styles.featuresGrid}>
             {features.map((feature, index) => (
-              <div 
+              <Link 
+                to={feature.path}
                 key={index}
                 className={`${styles.featureCard} ${activeFeature === index ? styles.active : ''}`}
                 onMouseEnter={() => setActiveFeature(index)}
                 onMouseLeave={() => setActiveFeature(null)}
                 style={{ 
                   animationDelay: `${index * 0.1}s`,
-                  '--feature-color': feature.color
+                  '--feature-color': feature.color,
+                  textDecoration: 'none'
                 }}
               >
                 <div className={styles.featureIcon}>{feature.icon}</div>
@@ -154,7 +156,7 @@ const HomePage = () => {
                     <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                   </svg>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

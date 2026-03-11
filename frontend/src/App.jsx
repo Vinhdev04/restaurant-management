@@ -6,10 +6,12 @@ import BackToTop from '@components/shared/BackToTop/BackToTop.jsx';
 import { Suspense } from 'react';
 import routes from '@routes/index.route.js';
 import Loading from '@components/shared/Loading/Loading.jsx';
+import PromotionPopup from '@components/shared/PromotionPopup/PromotionPopup.jsx';
 
 function App() {
   return (
     <Suspense fallback={<Loading />}>
+      <PromotionPopup />
       <Router>
         <div className="app">
           

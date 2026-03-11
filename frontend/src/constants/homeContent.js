@@ -4,37 +4,43 @@
       icon: '🍽️',
       title: 'Quản lý thực đơn',
       description: 'Dễ dàng cập nhật món ăn, giá cả và hình ảnh với giao diện trực quan',
-      color: '#D4734A'
+      color: '#D4734A',
+      path: '/menu'
     },
     {
       icon: '📋',
       title: 'Đặt bàn trực tuyến',
       description: 'Khách hàng đặt bàn nhanh chóng, quản lý reservation hiệu quả',
-      color: '#E8925C'
+      color: '#E8925C',
+      path: '/reservation'
     },
     {
       icon: '👨‍🍳',
       title: 'Kết nối bếp',
       description: 'Đồng bộ đơn hàng realtime từ bàn ăn đến khu vực bếp',
-      color: '#C9A961'
+      color: '#C9A961',
+      path: '/admin/dashboard'
     },
     {
       icon: '💳',
       title: 'Thanh toán nhanh',
       description: 'Xử lý bill, áp dụng khuyến mãi và in hóa đơn tự động',
-      color: '#8B9F7F'
+      color: '#8B9F7F',
+      path: '/admin/dashboard'
     },
     {
       icon: '📊',
       title: 'Báo cáo chi tiết',
       description: 'Thống kê doanh thu, món bán chạy theo ngày/tháng/năm',
-      color: '#F4A572'
+      color: '#F4A572',
+      path: '/admin/dashboard'
     },
     {
       icon: '👥',
       title: 'Quản lý nhân sự',
       description: 'Phân quyền, theo dõi hiệu suất làm việc của từng nhân viên',
-      color: '#D4734A'
+      color: '#D4734A',
+      path: '/admin/dashboard'
     }
   ];
 
