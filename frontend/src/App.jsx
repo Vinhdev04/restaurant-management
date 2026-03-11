@@ -5,10 +5,11 @@ import Footer from '@components/shared/Footer/Footer.jsx';
 import BackToTop from '@components/shared/BackToTop/BackToTop.jsx';
 import { Suspense } from 'react';
 import routes from '@routes/index.route.js';
+import Loading from '@components/shared/Loading/Loading.jsx';
 
 function App() {
   return (
-    <Suspense >
+    <Suspense fallback={<Loading />}>
       <Router>
         <div className="app">
           

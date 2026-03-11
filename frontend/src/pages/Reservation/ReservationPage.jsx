@@ -1,0 +1,148 @@
+import React, { useState } from 'react';
+import styles from './ReservationPage.module.scss';
+
+const ReservationPage = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    date: '',
+    time: '',
+    guests: '2',
+    notes: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Reservation data:', formData);
+    alert('Cảm ơn bạn! Yêu cầu đặt bàn của bạn đã được gửi đi. Chúng tôi sẽ sớm liên hệ lại để xác nhận.');
+  };
+
+  return (
+    <div className={styles.reservationPage}>
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <h1>Đặt Bàn</h1>
+          <p>Hãy để chúng tôi chuẩn bị cho bạn một trải nghiệm ẩm thực tuyệt vời nhất.</p>
+        </header>
+
+        <form className={styles.reservationForm} onSubmit={handleSubmit}>
+          <div className={styles.formGroup}>
+            <label htmlFor="name">Họ và tên</label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              value={formData.name} 
+              onChange={handleChange} 
+              placeholder="Nhập họ và tên của bạn" 
+              required 
+            />
+          </div>
+
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="email">Email</label>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                value={formData.email} 
+                onChange={handleChange} 
+                placeholder="example@gmail.com" 
+                required 
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="phone">Số điện thoại</label>
+              <input 
+                type="tel" 
+                id="phone" 
+                name="phone" 
+                value={formData.phone} 
+                onChange={handleChange} 
+                placeholder="Nhập số điện thoại" 
+                required 
+              />
+            </div>
+          </div>
+
+          <div className={styles.formRow}>
+            <div className={styles.formGroup}>
+              <label htmlFor="date">Ngày đặt</label>
+              <input 
+                type="date" 
+                id="date" 
+                name="date" 
+                value={formData.date} 
+                onChange={handleChange} 
+                required 
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label htmlFor="time">Giờ đặt</label>
+              <select 
+                id="time" 
+                name="time" 
+                value={formData.time} 
+                onChange={handleChange} 
+                required
+              >
+                <option value="">Chọn khung giờ</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="12:00">12:00 PM</option>
+                <option value="13:00">01:00 PM</option>
+                <option value="14:00">02:00 PM</option>
+                <option value="17:00">05:00 PM</option>
+                <option value="18:00">06:00 PM</option>
+                <option value="19:00">07:00 PM</option>
+                <option value="20:00">08:00 PM</option>
+                <option value="21:00">09:00 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="guests">Số lượng khách</label>
+            <select 
+              id="guests" 
+              name="guests" 
+              value={formData.guests} 
+              onChange={handleChange} 
+              required
+            >
+              {[...Array(10)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>{i + 1} khách</option>
+              ))}
+              <option value="more">Nhiều hơn 10 khách</option>
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="notes">Yêu cầu đặc biệt (Ghi chú)</label>
+            <textarea 
+              id="notes" 
+              name="notes" 
+              value={formData.notes} 
+              onChange={handleChange} 
+              placeholder="Ví dụ: Bàn gần cửa sổ, tiệc sinh nhật, dị ứng món ăn..." 
+            ></textarea>
+          </div>
+
+          <button type="submit" className={styles.submitBtn}>Xác nhận đặt bàn</button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ReservationPage;

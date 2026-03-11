@@ -85,14 +85,14 @@ const Header = () => {
             <span className={styles.notificationBadge}>3</span>
           </button>
           
-          <div className={styles.userProfile}>
+          <Link to="/admin" className={styles.userProfile}>
             <img 
               src="https://ui-avatars.com/api/?name=Admin&background=D4734A&color=fff" 
               alt="User Avatar" 
               className={styles.userAvatar}
             />
             <span className={styles.userName}>Admin</span>
-          </div>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}

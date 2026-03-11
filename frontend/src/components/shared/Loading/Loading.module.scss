@@ -1,0 +1,67 @@
+@import "@assets/styles/css/variable.module.scss";
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: $bg-primary;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $z-modal;
+}
+
+.spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-bottom: $spacing-md;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top-color: $primary-terracotta;
+    animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+
+  &::after {
+    border-top-color: $accent-gold;
+    animation-delay: -0.4s;
+  }
+}
+
+.text {
+  font-family: $font-heading;
+  color: $primary-terracotta;
+  font-size: $fs-md;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: pulse 2s ease-in-out infinite;
+  margin-top: $spacing-sm;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}

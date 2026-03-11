@@ -1,0 +1,102 @@
+@import "@assets/styles/css/variable.module.scss";
+
+.reservationPage {
+  padding: $spacing-xl 0;
+  background-color: $bg-secondary;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: $spacing-xl;
+
+  h1 {
+    font-family: $font-heading;
+    font-size: $fs-3xl;
+    color: $primary-terracotta;
+    margin-bottom: $spacing-sm;
+    text-transform: uppercase;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: $fs-md;
+  }
+}
+
+.reservationForm {
+  background-color: $bg-primary;
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-lg;
+
+  .formGroup {
+    margin-bottom: $spacing-md;
+
+    label {
+      display: block;
+      margin-bottom: $spacing-xs;
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: $spacing-sm;
+      border: 1px solid $border-medium;
+      border-radius: $radius-md;
+      font-family: $font-body;
+      font-size: $fs-base;
+      transition: $transition-normal;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-terracotta;
+        box-shadow: 0 0 0 2px rgba($primary-terracotta, 0.1);
+      }
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+  }
+
+  .formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-md;
+  }
+
+  .submitBtn {
+    width: 100%;
+    padding: $spacing-md;
+    background-color: $primary-terracotta;
+    color: $text-light;
+    border: none;
+    border-radius: $radius-md;
+    font-size: $fs-md;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition-normal;
+    text-transform: uppercase;
+    margin-top: $spacing-sm;
+
+    &:hover {
+      background-color: darken($primary-terracotta, 10%);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
