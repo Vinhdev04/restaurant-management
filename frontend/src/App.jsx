@@ -11,8 +11,8 @@ import PromotionPopup from '@components/shared/PromotionPopup/PromotionPopup.jsx
 function App() {
   return (
     <Suspense fallback={<Loading />}>
-      <PromotionPopup />
       <Router>
+        <PromotionPopup />
         <div className="app">
           
           <Header />
