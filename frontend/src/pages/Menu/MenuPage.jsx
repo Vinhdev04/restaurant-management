@@ -31,7 +31,12 @@ const MenuPage = () => {
 
   const handleOrderSubmit = (orderData) => {
     console.log('Order Submitted:', orderData);
-    alert(`Đặt món thành công!\n${orderData.quantity}x ${orderData.item.name}\nBàn số: ${orderData.tableNumber}\nTổng cộng: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderData.total)}`);
+    
+    const optionsText = orderData.selectedOptions.length > 0 
+      ? `\nTùy chọn: ${orderData.selectedOptions.map(o => o.name).join(', ')}`
+      : '';
+      
+    alert(`Đặt món thành công!\n${orderData.quantity}x ${orderData.item.name}${optionsText}\nBàn số: ${orderData.tableNumber}\nTổng cộng: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderData.total)}`);
     handleCloseModal();
   };
 
