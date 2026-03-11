@@ -1,0 +1,145 @@
+@import "@assets/styles/css/variable.module.scss";
+
+.orderForm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .itemPreview {
+    display: flex;
+    gap: $spacing-md;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $border-light;
+    margin-bottom: $spacing-sm;
+
+    img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: $radius-md;
+    }
+
+    .itemInfo {
+      h3 {
+        margin: 0;
+        font-family: $font-heading;
+        font-size: $fs-md;
+        color: $text-primary;
+      }
+      .price {
+        color: $primary-terracotta;
+        font-weight: 600;
+        margin-top: $spacing-xs;
+      }
+    }
+  }
+
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    label {
+      font-size: $fs-sm;
+      font-weight: 600;
+      color: $text-secondary;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select, textarea {
+      padding: $spacing-sm;
+      border: 1px solid $border-light;
+      border-radius: $radius-md;
+      font-family: $font-body;
+      font-size: $fs-base;
+      transition: $transition-normal;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-terracotta;
+        box-shadow: 0 0 0 2px rgba($primary-terracotta, 0.1);
+      }
+    }
+  }
+
+  .quantityControl {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid $border-medium;
+      background: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: $transition-normal;
+
+      &:hover:not(:disabled) {
+        background-color: $primary-terracotta;
+        color: white;
+        border-color: $primary-terracotta;
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+    }
+
+    span {
+      font-size: $fs-lg;
+      font-weight: 600;
+      min-width: 20px;
+      text-align: center;
+    }
+  }
+
+  .totalSection {
+    margin-top: $spacing-sm;
+    padding-top: $spacing-md;
+    border-top: 1px solid $border-light;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    span:first-child {
+      font-weight: 600;
+      color: $text-secondary;
+    }
+
+    .totalPrice {
+      font-size: $fs-xl;
+      font-weight: 700;
+      color: $primary-terracotta;
+    }
+  }
+
+  .submitBtn {
+    width: 100%;
+    padding: $spacing-md;
+    background-color: $primary-terracotta;
+    color: white;
+    border: none;
+    border-radius: $radius-md;
+    font-weight: 600;
+    font-size: $fs-base;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: $transition-normal;
+    margin-top: $spacing-sm;
+
+    &:hover {
+      background-color: darken($primary-terracotta, 10%);
+      transform: translateY(-2px);
+      box-shadow: $shadow-md;
+    }
+  }
+}

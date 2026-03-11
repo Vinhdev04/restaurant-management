@@ -3,6 +3,8 @@ import styles from './MenuPage.module.scss';
 import { menuCategories, menuItems } from '@constants/menuContent';
 import { useParams, useNavigate } from 'react-router-dom';
 import SkeletonItem from './SkeletonItem';
+import Modal from '@components/shared/Modal/Modal';
+import OrderForm from './OrderForm/OrderForm';
 
 const MenuPage = () => {
   const { category } = useParams();
@@ -12,8 +14,26 @@ const MenuPage = () => {
   const [displayItems, setDisplayItems] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const loaderRef = useRef(null);
   const itemsPerPage = 6;
+
+  const handleOpenOrderModal = (item) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  };
+
+  const handleOrderSubmit = (orderData) => {
+    console.log('Order Submitted:', orderData);
+    alert(`Đặt món thành công!\n${orderData.quantity}x ${orderData.item.name}\nBàn số: ${orderData.tableNumber}\nTổng cộng: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderData.total)}`);
+    handleCloseModal();
+  };
 
   // Map internal IDs to URL params for filter buttons
   const reverseCategoryMap = {
@@ -126,12 +146,31 @@ const MenuPage = () => {
                 <div className={styles.itemContent}>
                   <h3>{item.name}</h3>
                   <p>{item.description}</p>
-                  <button className={styles.orderBtn}>Đặt món ngay</button>
+                  <button 
+                    className={styles.orderBtn}
+                    onClick={() => handleOpenOrderModal(item)}
+                  >
+                    Đặt món ngay
+                  </button>
                 </div>
               </div>
             ))
           )}
         </div>
+
+        {/* Modal for Ordering */}
+        <Modal 
+          isOpen={isModalOpen} 
+          onClose={handleCloseModal} 
+          title="Đặt Món Trực Tiếp"
+        >
+          {selectedItem && (
+            <OrderForm 
+              item={selectedItem} 
+              onSubmit={handleOrderSubmit} 
+            />
+          )}
+        </Modal>
 
         {/* Pagination Controls */}
         {!loading && allFilteredItems.length > itemsPerPage && (

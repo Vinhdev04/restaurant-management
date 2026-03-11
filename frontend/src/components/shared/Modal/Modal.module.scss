@@ -1,0 +1,70 @@
+@import "@assets/styles/css/variable.module.scss";
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: $z-modal;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background-color: $bg-primary;
+  width: 90%;
+  max-width: 500px;
+  border-radius: $radius-lg;
+  position: relative;
+  box-shadow: $shadow-lg;
+  animation: slideIn 0.3s ease-out;
+  overflow: hidden;
+}
+
+.modalHeader {
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $border-light;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    font-family: $font-heading;
+    color: $primary-terracotta;
+    margin: 0;
+    font-size: $fs-xl;
+  }
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: $text-secondary;
+  transition: $transition-normal;
+
+  &:hover {
+    color: $primary-terracotta;
+    transform: rotate(90deg);
+  }
+}
+
+.modalBody {
+  padding: $spacing-lg;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
