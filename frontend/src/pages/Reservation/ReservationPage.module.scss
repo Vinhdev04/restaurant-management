@@ -2,40 +2,89 @@
 
 .reservationPage {
   padding: $spacing-xl 0;
-  background-color: $bg-secondary;
+  background: linear-gradient(135deg, $bg-secondary 0%, #fff 100%);
   min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 .container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 0 $spacing-md;
+  width: 100%;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: $spacing-xl;
+.reservationCard {
+  background-color: $bg-primary;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  min-height: 600px;
 
-  h1 {
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.infoSection {
+  background-color: $primary-terracotta;
+  color: $text-light;
+  padding: $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: rgba($text-light, 0.1);
+    border-radius: 50%;
+  }
+
+  h2 {
     font-family: $font-heading;
     font-size: $fs-3xl;
-    color: $primary-terracotta;
-    margin-bottom: $spacing-sm;
-    text-transform: uppercase;
+    margin-bottom: $spacing-md;
+    position: relative;
   }
 
   p {
-    color: $text-secondary;
     font-size: $fs-md;
+    line-height: 1.6;
+    margin-bottom: $spacing-xl;
+    opacity: 0.9;
+  }
+
+  .contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .infoItem {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      font-size: $fs-base;
+
+      i { font-style: normal; font-size: 1.2rem; }
+    }
   }
 }
 
-.reservationForm {
-  background-color: $bg-primary;
+.formSection {
   padding: $spacing-xl;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-lg;
+}
 
+.reservationForm {
   .formGroup {
     margin-bottom: $spacing-md;
 
@@ -44,26 +93,31 @@
       margin-bottom: $spacing-xs;
       font-weight: 600;
       color: $text-primary;
+      font-size: $fs-sm;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     input, select, textarea {
       width: 100%;
       padding: $spacing-sm;
-      border: 1px solid $border-medium;
+      border: 1px solid $border-light;
       border-radius: $radius-md;
       font-family: $font-body;
       font-size: $fs-base;
       transition: $transition-normal;
+      background-color: $bg-secondary;
 
       &:focus {
         outline: none;
         border-color: $primary-terracotta;
-        box-shadow: 0 0 0 2px rgba($primary-terracotta, 0.1);
+        background-color: $bg-primary;
+        box-shadow: 0 4px 12px rgba($primary-terracotta, 0.1);
       }
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 100px;
       resize: vertical;
     }
   }
@@ -87,13 +141,20 @@
     transition: $transition-normal;
     text-transform: uppercase;
     margin-top: $spacing-sm;
+    letter-spacing: 2px;
 
     &:hover {
       background-color: darken($primary-terracotta, 10%);
       transform: translateY(-2px);
+      box-shadow: $shadow-md;
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 }
+
 
 @media (max-width: $breakpoint-sm) {
   .formRow {

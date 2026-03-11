@@ -1,0 +1,61 @@
+@import "@assets/styles/css/variable.module.scss";
+
+.skeletonItem {
+  background-color: $bg-primary;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeletonImage {
+  height: 220px;
+  background: linear-gradient(90deg, $border-light 25%, $bg-secondary 50%, $border-light 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+.skeletonContent {
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.skeletonTitle {
+  height: 24px;
+  width: 70%;
+  background: linear-gradient(90deg, $border-light 25%, $bg-secondary 50%, $border-light 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: $radius-sm;
+}
+
+.skeletonText {
+  height: 16px;
+  width: 100%;
+  background: linear-gradient(90deg, $border-light 25%, $bg-secondary 50%, $border-light 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: $radius-sm;
+
+  &:last-child {
+    width: 40%;
+  }
+}
+
+.skeletonButton {
+  height: 40px;
+  width: 100%;
+  background: linear-gradient(90deg, $border-light 25%, $bg-secondary 50%, $border-light 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: $radius-md;
+  margin-top: $spacing-sm;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

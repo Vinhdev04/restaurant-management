@@ -155,6 +155,69 @@
   }
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-xl;
+  padding-bottom: $spacing-xl;
+
+  .pageBtn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid $border-medium;
+    background-color: $bg-primary;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: $transition-normal;
+    font-weight: 500;
+
+    &:hover:not(:disabled) {
+      border-color: $primary-terracotta;
+      color: $primary-terracotta;
+    }
+
+    &.active {
+      background-color: $primary-terracotta;
+      border-color: $primary-terracotta;
+      color: $text-light;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-xl 0;
+  width: 100%;
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    background-color: $primary-terracotta;
+    border-radius: 50%;
+    margin: 0 5px;
+    animation: bounce 0.6s infinite alternate;
+
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+@keyframes bounce {
+  to { transform: translateY(-10px); }
+}
+
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
