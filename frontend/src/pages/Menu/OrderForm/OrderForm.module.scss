@@ -4,31 +4,49 @@
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: $spacing-xs;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $border-medium;
+    border-radius: $radius-full;
+  }
 
   .itemPreview {
     display: flex;
-    gap: $spacing-md;
-    padding-bottom: $spacing-md;
-    border-bottom: 1px solid $border-light;
+    gap: $spacing-lg;
+    padding: $spacing-md;
+    background-color: $bg-secondary;
+    border-radius: $radius-lg;
     margin-bottom: $spacing-sm;
 
     img {
-      width: 80px;
-      height: 80px;
+      width: 100px;
+      height: 100px;
       object-fit: cover;
       border-radius: $radius-md;
+      box-shadow: $shadow-sm;
     }
 
     .itemInfo {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
       h3 {
         margin: 0;
         font-family: $font-heading;
-        font-size: $fs-md;
+        font-size: $fs-lg;
         color: $text-primary;
       }
       .price {
         color: $primary-terracotta;
-        font-weight: 600;
+        font-weight: 700;
+        font-size: $fs-md;
         margin-top: $spacing-xs;
       }
     }
@@ -40,130 +58,88 @@
     gap: $spacing-xs;
 
     label {
-      font-size: $fs-sm;
-      font-weight: 600;
+      font-size: $fs-xs;
+      font-weight: 700;
       color: $text-secondary;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
     }
 
     input, select, textarea {
-      padding: $spacing-sm;
-      border: 1px solid $border-light;
+      padding: $spacing-sm $spacing-md;
+      border: 2px solid $border-light;
       border-radius: $radius-md;
       font-family: $font-body;
       font-size: $fs-base;
       transition: $transition-normal;
+      background-color: white;
 
       &:focus {
         outline: none;
         border-color: $primary-terracotta;
-        box-shadow: 0 0 0 2px rgba($primary-terracotta, 0.1);
+        background-color: white;
+        box-shadow: 0 4px 12px rgba($primary-terracotta, 0.08);
       }
-    }
-  }
-
-  .quantityControl {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-
-    button {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px solid $border-medium;
-      background: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: $transition-normal;
-
-      &:hover:not(:disabled) {
-        background-color: $primary-terracotta;
-        color: white;
-        border-color: $primary-terracotta;
-      }
-
-      &:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-      }
-    }
-
-    span {
-      font-size: $fs-lg;
-      font-weight: 600;
-      min-width: 20px;
-      text-align: center;
-    }
-  }
-
-  .totalSection {
-    margin-top: $spacing-sm;
-    padding-top: $spacing-md;
-    border-top: 1px solid $border-light;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    span:first-child {
-      font-weight: 600;
-      color: $text-secondary;
-    }
-
-    .totalPrice {
-      font-size: $fs-xl;
-      font-weight: 700;
-      color: $primary-terracotta;
     }
   }
 
   .optionsSection {
-    margin-bottom: $spacing-md;
+    background-color: $bg-secondary;
+    padding: $spacing-md;
+    border-radius: $radius-lg;
 
     .optionsTitle {
-      font-size: $fs-sm;
-      font-weight: 600;
+      font-size: $fs-xs;
+      font-weight: 700;
       color: $text-secondary;
-      margin-bottom: $spacing-sm;
+      margin-bottom: $spacing-md;
       display: block;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .optionsList {
-      display: flex;
-      flex-direction: column;
-      gap: $spacing-xs;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $spacing-sm;
+
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+      }
     }
 
     .optionItem {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: $spacing-xs $spacing-sm;
-      background-color: $bg-secondary;
+      padding: $spacing-sm;
+      background-color: white;
+      border: 2px solid transparent;
       border-radius: $radius-md;
       cursor: pointer;
       transition: $transition-normal;
 
       &:hover {
-        background-color: darken($bg-secondary, 5%);
+        border-color: rgba($primary-terracotta, 0.3);
       }
 
       &.active {
-        background-color: rgba($primary-terracotta, 0.1);
-        border: 1px solid $primary-terracotta;
+        background-color: white;
+        border-color: $primary-terracotta;
+        box-shadow: $shadow-sm;
       }
 
       .optionName {
         font-size: $fs-sm;
         display: flex;
         align-items: center;
-        gap: $spacing-xs;
+        gap: $spacing-sm;
+        font-weight: 500;
 
         input {
+          width: 18px;
+          height: 18px;
+          accent-color: $primary-terracotta;
           cursor: pointer;
         }
       }
@@ -171,24 +147,87 @@
       .optionPrice {
         font-size: $fs-xs;
         color: $primary-terracotta;
-        font-weight: 600;
+        font-weight: 700;
       }
     }
   }
 
+  .formRow {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+
+  .quantityRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md;
+    border: 2px solid $border-light;
+    border-radius: $radius-lg;
+
+    label {
+      font-weight: 700;
+      font-size: $fs-sm;
+      color: $text-primary;
+    }
+  }
+
+  .quantityControl {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+
+    button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid $primary-terracotta;
+      background: none;
+      font-size: 1.2rem;
+      color: $primary-terracotta;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: $transition-normal;
+      font-weight: bold;
+
+      &:hover:not(:disabled) {
+        background-color: $primary-terracotta;
+        color: white;
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        border-color: $border-medium;
+        color: $border-medium;
+        cursor: not-allowed;
+      }
+    }
+
+    span {
+      font-size: $fs-lg;
+      font-weight: 700;
+      min-width: 20px;
+      text-align: center;
+      color: $text-primary;
+    }
+  }
+
   .recommendationsSection {
-    margin-top: $spacing-lg;
-    padding-top: $spacing-lg;
-    border-top: 1px dashed $border-medium;
+    margin-top: $spacing-sm;
 
     .recTitle {
-      font-size: $fs-sm;
-      font-weight: 600;
-      color: $text-primary;
+      font-size: $fs-xs;
+      font-weight: 700;
+      color: $text-secondary;
       margin-bottom: $spacing-md;
       display: flex;
       align-items: center;
       gap: $spacing-xs;
+      text-transform: uppercase;
+      letter-spacing: 1px;
       
       i { font-style: normal; }
     }
@@ -197,7 +236,8 @@
       display: flex;
       gap: $spacing-md;
       overflow-x: auto;
-      padding-bottom: $spacing-sm;
+      padding: $spacing-xs;
+      margin: 0 -#{$spacing-xs};
 
       &::-webkit-scrollbar {
         height: 4px;
@@ -209,7 +249,7 @@
     }
 
     .recItem {
-      min-width: 140px;
+      min-width: 120px;
       display: flex;
       flex-direction: column;
       gap: $spacing-xs;
@@ -217,9 +257,9 @@
       transition: $transition-normal;
 
       &:hover {
-        transform: translateY(-2px);
+        transform: translateY(-4px);
         
-        img { box-shadow: $shadow-md; }
+        img { box-shadow: $shadow-md; border-color: $primary-terracotta; }
       }
 
       img {
@@ -227,6 +267,8 @@
         height: 80px;
         object-fit: cover;
         border-radius: $radius-md;
+        border: 2px solid transparent;
+        transition: $transition-normal;
       }
 
       .recName {
@@ -235,15 +277,39 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        color: $text-primary;
       }
 
       .recPrice {
         font-size: $fs-xs;
         color: $primary-terracotta;
+        font-weight: 700;
       }
     }
   }
 
+  .totalSection {
+    margin-top: $spacing-sm;
+    padding: $spacing-lg;
+    background-color: $bg-dark;
+    border-radius: $radius-lg;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+
+    span:first-child {
+      font-weight: 600;
+      font-size: $fs-sm;
+      letter-spacing: 1px;
+    }
+
+    .totalPrice {
+      font-size: $fs-2xl;
+      font-weight: 700;
+      color: $primary-amber;
+    }
+  }
 
   .submitBtn {
     width: 100%;
@@ -252,18 +318,23 @@
     color: white;
     border: none;
     border-radius: $radius-md;
-    font-weight: 600;
+    font-weight: 700;
     font-size: $fs-base;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     cursor: pointer;
     transition: $transition-normal;
     margin-top: $spacing-sm;
+    box-shadow: $shadow-md;
 
     &:hover {
-      background-color: darken($primary-terracotta, 10%);
+      background-color: darken($primary-terracotta, 5%);
       transform: translateY(-2px);
-      box-shadow: $shadow-md;
+      box-shadow: $shadow-lg;
+    }
+
+    &:active {
+      transform: translateY(0);
     }
   }
 }

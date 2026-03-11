@@ -103,7 +103,7 @@ const OrderForm = ({ item: initialItem, onSubmit }) => {
         </div>
       )}
 
-      <div className={styles.formGroup}>
+      <div className={styles.quantityRow}>
         <label>Số lượng</label>
         <div className={styles.quantityControl}>
           <button type="button" onClick={() => handleQuantityChange(-1)} disabled={quantity <= 1}>-</button>

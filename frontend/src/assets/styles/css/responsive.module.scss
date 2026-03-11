@@ -1,0 +1,56 @@
+@import "@assets/styles/css/variable.module.scss";
+
+// Mixins for Media Queries
+@mixin mobile {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$breakpoint-lg}) {
+    @content;
+  }
+}
+
+// Global Responsive Rules
+:global {
+  html {
+    @include mobile {
+      font-size: 14px;
+    }
+  }
+
+  .container {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: $spacing-md;
+    padding-left: $spacing-md;
+
+    @media (min-width: $breakpoint-sm) { max-width: 540px; }
+    @media (min-width: $breakpoint-md) { max-width: 720px; }
+    @media (min-width: $breakpoint-lg) { max-width: 960px; }
+    @media (min-width: $breakpoint-xl) { max-width: 1140px; }
+    @media (min-width: $breakpoint-xxl) { max-width: 1320px; }
+  }
+
+  // Common Responsive Helpers
+  .hide-on-mobile {
+    @include mobile {
+      display: none !important;
+    }
+  }
+
+  .show-on-mobile {
+    @media (min-width: $breakpoint-md) {
+      display: none !important;
+    }
+  }
+}
