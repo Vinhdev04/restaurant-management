@@ -6,6 +6,7 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Giả lập trạng thái đăng nhập
 
   useEffect(() => {
     const handleScroll = () => {
@@ -85,14 +86,21 @@ const Header = () => {
             <span className={styles.notificationBadge}>3</span>
           </button>
           
-          <Link to="/admin" className={styles.userProfile}>
-            <img 
-              src="https://ui-avatars.com/api/?name=Admin&background=D4734A&color=fff" 
-              alt="User Avatar" 
-              className={styles.userAvatar}
-            />
-            <span className={styles.userName}>Admin</span>
-          </Link>
+          {isLoggedIn ? (
+            <Link to="/admin" className={styles.userProfile}>
+              <img 
+                src="https://ui-avatars.com/api/?name=Admin&background=D4734A&color=fff" 
+                alt="User Avatar" 
+                className={styles.userAvatar}
+              />
+              <span className={styles.userName}>Admin</span>
+            </Link>
+          ) : (
+            <div className={styles.authButtons}>
+              <Link to="/login" className={styles.btnLogin}>Đăng nhập</Link>
+              <Link to="/register" className={styles.btnRegister}>Đăng ký</Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}

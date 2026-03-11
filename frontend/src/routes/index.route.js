@@ -26,6 +26,14 @@ const routes = [
         component: lazy(() => import('@/pages/Admin/Dashboard/Overview'))
     },
     {
+        path: '/login',
+        component: lazy(() => import('@/pages/Auth/LoginPage'))
+    },
+    {
+        path: '/register',
+        component: lazy(() => import('@/pages/Auth/RegisterPage'))
+    },
+    {
         path: '*',
         component: lazy(() => import('@/pages/NotFoundPage/NotFoundPage'))
     },

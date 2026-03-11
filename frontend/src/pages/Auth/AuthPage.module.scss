@@ -1,0 +1,131 @@
+@import "@assets/styles/css/variable.module.scss";
+
+.authPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $bg-secondary 0%, #fff 100%);
+  padding: $spacing-md;
+}
+
+.authCard {
+  background-color: $bg-primary;
+  width: 100%;
+  max-width: 450px;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-lg;
+  overflow: hidden;
+  animation: slideUp 0.5s ease-out;
+}
+
+.authHeader {
+  padding: $spacing-xl $spacing-xl $spacing-md;
+  text-align: center;
+
+  h2 {
+    font-family: $font-heading;
+    color: $primary-terracotta;
+    font-size: $fs-2xl;
+    margin-bottom: $spacing-xs;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: $fs-sm;
+  }
+}
+
+.authForm {
+  padding: 0 $spacing-xl $spacing-xl;
+
+  .formGroup {
+    margin-bottom: $spacing-md;
+
+    label {
+      display: block;
+      margin-bottom: $spacing-xs;
+      font-weight: 600;
+      color: $text-primary;
+      font-size: $fs-xs;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    input {
+      width: 100%;
+      padding: $spacing-sm $spacing-md;
+      border: 2px solid $border-light;
+      border-radius: $radius-md;
+      font-family: $font-body;
+      font-size: $fs-base;
+      transition: $transition-normal;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-terracotta;
+        box-shadow: 0 4px 12px rgba($primary-terracotta, 0.08);
+      }
+    }
+  }
+
+  .forgotPassword {
+    display: block;
+    text-align: right;
+    font-size: $fs-xs;
+    color: $primary-terracotta;
+    margin-top: -$spacing-sm;
+    margin-bottom: $spacing-md;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .submitBtn {
+    width: 100%;
+    padding: $spacing-md;
+    background-color: $primary-terracotta;
+    color: white;
+    border: none;
+    border-radius: $radius-md;
+    font-weight: 700;
+    font-size: $fs-base;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: $transition-normal;
+    margin-top: $spacing-sm;
+
+    &:hover {
+      background-color: darken($primary-terracotta, 5%);
+      transform: translateY(-2px);
+      box-shadow: $shadow-md;
+    }
+  }
+}
+
+.authFooter {
+  padding: $spacing-md;
+  background-color: $bg-secondary;
+  text-align: center;
+  font-size: $fs-sm;
+  color: $text-secondary;
+
+  a {
+    color: $primary-terracotta;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
