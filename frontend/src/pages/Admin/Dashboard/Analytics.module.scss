@@ -1,0 +1,369 @@
+@use '@assets/styles/css/variable.module.scss' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  margin-bottom: 8px;
+
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $secondary-charcoal;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    color: $text-secondary;
+    font-size: 14px;
+  }
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.statCard {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid $admin-border;
+}
+
+.statHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+
+  .iconBox {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+
+    &.success { background-color: rgba($status-success, 0.1); color: $status-success; }
+    &.info { background-color: rgba($status-info, 0.1); color: $status-info; }
+    &.warning { background-color: rgba($status-warning, 0.1); color: $status-warning; }
+    &.error { background-color: rgba($status-error, 0.1); color: $status-error; }
+  }
+
+  .change {
+    font-size: 12px;
+    font-weight: 600;
+    color: $status-success;
+    background-color: rgba($status-success, 0.1);
+    padding: 4px 8px;
+    border-radius: 12px;
+  }
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: $secondary-charcoal;
+  margin-bottom: 4px;
+}
+
+.statTitle {
+  color: $text-secondary;
+  font-size: 14px;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chartCard {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid $admin-border;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: $secondary-charcoal;
+  margin-bottom: 24px;
+}
+
+// Bar Chart Styles
+.barChart {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.barRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .barLabel {
+    width: 80px;
+    font-size: 13px;
+    color: $text-secondary;
+  }
+
+  .barTrack {
+    flex: 1;
+    height: 8px;
+    background-color: $admin-bg;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .barFill {
+    height: 100%;
+    background-color: $admin-primary;
+    border-radius: 4px;
+  }
+
+  .barValue {
+    width: 60px;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 600;
+    color: $secondary-charcoal;
+  }
+}
+
+// Top Items List
+.topItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.topItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $admin-bg;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.rankBox {
+  width: 32px;
+  height: 32px;
+  background-color: rgba($admin-primary, 0.1);
+  color: $admin-primary;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.itemInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .itemName {
+    font-weight: 600;
+    font-size: 14px;
+    color: $secondary-charcoal;
+  }
+
+  .itemOrders {
+    font-size: 12px;
+    color: $text-secondary;
+  }
+}
+
+.itemStats {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  .itemPrice {
+    font-weight: 600;
+    font-size: 14px;
+    color: $secondary-charcoal;
+  }
+
+  .itemChange {
+    font-size: 12px;
+    
+    &.positive { color: $status-success; }
+    &.negative { color: $status-error; }
+  }
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+// Donut Chart
+.satisfactionContent {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.donutChart {
+  position: relative;
+  width: 120px;
+  height: 120px;
+
+  .circularChart {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .circleBg {
+    fill: none;
+    stroke: $admin-bg;
+    stroke-width: 3.8;
+  }
+
+  .circle {
+    fill: none;
+    stroke: $admin-primary;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    animation: progress 1s ease-out forwards;
+  }
+
+  .donutCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .donutValue {
+    font-size: 20px;
+    font-weight: 700;
+    color: $secondary-charcoal;
+  }
+
+  .donutLabel {
+    font-size: 10px;
+    color: $text-secondary;
+  }
+}
+
+.ratingList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ratingRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  
+  .starLabel { color: $text-secondary; }
+  .starValue { font-weight: 600; color: $secondary-charcoal; }
+}
+
+// Peak Hours
+.peakHoursList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.peakRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .peakTime {
+    font-size: 12px;
+    color: $text-secondary;
+  }
+
+  .peakBarContainer {
+    height: 6px;
+    background-color: $admin-bg;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .peakBar {
+    height: 100%;
+    background-color: $primary-amber;
+    border-radius: 3px;
+  }
+
+  .peakValue {
+    font-size: 12px;
+    font-weight: 600;
+    color: $secondary-charcoal;
+    text-align: right;
+  }
+}
+
+// Table Turnover
+.turnoverList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.turnoverRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: $admin-bg;
+  border-radius: 8px;
+}
+
+.turnoverInfo {
+  display: flex;
+  flex-direction: column;
+
+  .tableName {
+    font-weight: 600;
+    font-size: 14px;
+    color: $secondary-charcoal;
+  }
+
+  .turnCount {
+    font-size: 12px;
+    color: $text-secondary;
+  }
+}
+
+.turnRevenue {
+  font-weight: 600;
+  color: $admin-primary;
+  font-size: 14px;
+}

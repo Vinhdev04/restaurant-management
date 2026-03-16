@@ -1,0 +1,115 @@
+@use '@assets/styles/css/variable.module.scss' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  margin-bottom: 8px;
+
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $secondary-charcoal;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    color: $text-secondary;
+    font-size: 14px;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid $admin-border;
+  padding-bottom: 16px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-secondary;
+  cursor: pointer;
+  position: relative;
+  padding-bottom: 16px;
+  margin-bottom: -17px;
+
+  &.active {
+    color: $admin-primary;
+    font-weight: 600;
+    border-bottom: 2px solid $admin-primary;
+  }
+}
+
+.content {
+  background-color: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid $admin-border;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: $secondary-charcoal;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 600px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  input, select {
+    padding: 10px 12px;
+    border: 1px solid $admin-border;
+    border-radius: 8px;
+    font-size: 14px;
+    color: $secondary-charcoal;
+    background-color: white;
+
+    &:focus {
+      outline: none;
+      border-color: $admin-primary;
+      box-shadow: 0 0 0 3px rgba($admin-primary, 0.1);
+    }
+  }
+}
+
+.saveButton {
+  background-color: $admin-primary;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+  margin-top: 8px;
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: $admin-primary-hover;
+  }
+}
