@@ -487,11 +487,21 @@
   transform: translateX(100%);
   transition: transform $transition-normal;
   overflow-y: auto;
-  z-index: $z-fixed;
+  z-index: $z-fixed; // Higher than header
 
   &.mobileNavOpen {
     transform: translateX(0);
   }
+}
+
+.mobileOverlay {
+  position: fixed;
+  top: 0; // Cover the whole screen
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: $z-sticky - 1; // Lower than header
 }
 
 .mobileNavList {
