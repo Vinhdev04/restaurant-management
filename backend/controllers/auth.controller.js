@@ -2,17 +2,22 @@ const User = require('../models/User.model');
 
 // Tự động tạo tài khoản mặc định nếu DB chưa có ai
 const seedUsers = async () => {
-    const count = await User.countDocuments();
-    if (count === 0) {
-        await User.insertMany([
-            { username: 'admin', password: '123', role: 'admin' },
-            { username: 'quanly', password: '123', role: 'manager' },
-            { username: 'daubep', password: '123', role: 'chef' }
-        ]);
-        console.log("Đã tạo 3 tài khoản mặc định: admin, quanly, daubep (Mật khẩu chung: 123)");
+    try {
+        const count = await User.countDocuments();
+        if (count === 0) {
+            await User.insertMany([
+                { username: 'admin', password: '123', role: 'admin' },
+                { username: 'quanly', password: '123', role: 'manager' },
+                { username: 'daubep', password: '123', role: 'chef' }
+            ]);
+            console.log("✅ Đã tạo 3 tài khoản mặc định: admin, quanly, daubep (Mật khẩu chung: 123)");
+        }
+    } catch (error) {
+        console.error("⚠️ Không thể tự động seed users (có thể do chưa kết nối DB):", error.message);
     }
 };
-seedUsers();
+// Đợi 2s để DB kịp kết nối rồi mới check seed
+setTimeout(seedUsers, 2000);
 
 const login = async (req, res) => {
     try {

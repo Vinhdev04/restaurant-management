@@ -5,7 +5,10 @@ import Tablet from './Tablet';
 import Chef from './Chef'; 
 import Manager from './Manager';
 
-const socket = io('http://localhost:5000');
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+
+const socket = io(SOCKET_URL);
 
 function App() {
   // Biến lưu thông tin người đang đăng nhập (Lưu vào localStorage để F5 không bị văng ra)
@@ -23,7 +26,7 @@ function App() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
