@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Vinhdev04/restaurant-management/issues"
   },
-  "homepage": "https://github.com/Vinhdev04/restaurant-management#readme"
+  "homepage": "https://github.com/Vinhdev04/restaurant-management#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
