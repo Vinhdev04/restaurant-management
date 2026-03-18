@@ -9,7 +9,7 @@ const seedUsers = async () => {
             { username: 'quanly', password: '123', role: 'manager' },
             { username: 'daubep', password: '123', role: 'chef' }
         ]);
-        console.log("Đã tạo 3 tài khoản mặc định: admin, quanly, daubep (Mật khẩu chung: 123)");
+        console.log("Tạo 3 tài khoản: admin, quanly, daubep ");
     }
 };
 seedUsers();
