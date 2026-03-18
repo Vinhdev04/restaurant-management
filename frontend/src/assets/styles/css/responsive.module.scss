@@ -1,4 +1,4 @@
-@import "@assets/styles/css/variable.module.scss";
+@use '@assets/styles/css/variable.module.scss' as *;
 
 // Mixins for Media Queries
 @mixin mobile {

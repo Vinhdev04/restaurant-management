@@ -4,7 +4,7 @@ import Header from '@components/shared/Header/Header.jsx';
 import Footer from '@components/shared/Footer/Footer.jsx';
 import BackToTop from '@components/shared/BackToTop/BackToTop.jsx';
 import { Suspense } from 'react';
-import routes from '@routes/index.route.js';
+import routes from '@routes/index.route.jsx';
 import Loading from '@components/shared/Loading/Loading.jsx';
 import PromotionPopup from '@components/shared/PromotionPopup/PromotionPopup.jsx';
 
