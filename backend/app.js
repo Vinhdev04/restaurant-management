@@ -28,7 +28,7 @@ app.use(cors());
 app.use(express.json()); // Giúp Backend đọc được cục data (Gà rán, 50k) mà Frontend gửi lên
 
 // 2. KẾT NỐI DATABASE
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/NhaHang_DB';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Toan:123@cluster0.0hmrrgm.mongodb.net/NhaHang_DB?retryWrites=true&w=majority';
 mongoose.connect(MONGODB_URI)
     .then(() => console.log("✅ Kết nối MongoDB thành công!"))
     .catch(err => console.error("❌ Lỗi kết nối MongoDB:", err));

@@ -10,7 +10,7 @@ const seedUsers = async () => {
                 { username: 'quanly', password: '123', role: 'manager' },
                 { username: 'daubep', password: '123', role: 'chef' }
             ]);
-            console.log("✅ Đã tạo 3 tài khoản mặc định: admin, quanly, daubep (Mật khẩu chung: 123)");
+            console.log("✅ Đã tạo 3 tài khoản mặc định: admin, quanly, daubep");
         }
     } catch (error) {
         console.error("⚠️ Không thể tự động seed users (có thể do chưa kết nối DB):", error.message);
