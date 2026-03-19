@@ -1,90 +1,105 @@
-# 🍽️ Restaurant Management System (RMS)
+# 🍽️ Restaurant Management System (RMS) - Fullstack Solution
 
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![NodeJS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Sass](https://img.shields.io/badge/Sass-CC6699?style=for-the-badge&logo=sass&logoColor=white)](https://sass-lang.com/)
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-
-Hệ thống quản lý nhà hàng thông minh, hiện đại và tối ưu hóa quy trình vận hành toàn diện. Dự án tập trung vào trải nghiệm người dùng mượt mà, từ việc đặt món trực tuyến đến quản lý hệ thống phía Admin.
+Hệ thống quản lý nhà hàng toàn diện (Fullstack) tích hợp Real-time, hỗ trợ quy trình từ gọi món tại bàn đến quản lý bếp và doanh thu.
 
 ---
 
-## ✨ Tính Năng Nổi Bật Đã Hoàn Thành
+## 🏗️ Kiến Trúc Hệ Thống
 
-### 🎨 Giao diện & Trải nghiệm người dùng (UI/UX)
-- **Thiết kế Hiện đại**: Sử dụng phong cách thiết kế sang trọng với tông màu Terracotta chủ đạo.
-- **Responsive Design**: Tối ưu hóa hiển thị hoàn hảo trên mọi thiết bị (Mobile, Tablet, Desktop) thông qua hệ thống chuẩn hóa `responsive.module.scss`.
-- **Skeleton Loading**: Hiệu ứng tải trang mượt mà, chuyên nghiệp cho danh sách thực đơn.
-- **Promotion Popup**: Thông báo khuyến mãi tự động xuất hiện với hiệu ứng animation bắt mắt và thanh đếm ngược tự động đóng.
-
-### 🍱 Thực đơn thông minh (E-Menu)
-- **Phân loại đa dạng**: Hỗ trợ lọc món ăn theo danh mục (Khai vị, Món chính, Đồ uống, Tráng miệng).
-- **Infinity Scroll & Pagination**: Kết hợp cuộn vô hạn và phân trang để tối ưu trải nghiệm khám phá món ăn.
-- **Tùy chọn món ăn (Options)**: Cho phép khách hàng chọn thêm topping, mức độ cay, kích cỡ... với giá cập nhật thời gian thực.
-- **Gợi ý món ăn (Recommendations)**: Hệ thống tự động gợi ý các món dùng kèm phù hợp ngay trong form đặt món.
-
-### 📅 Đặt bàn & Đặt món trực tiếp
-- **Reservation System**: Trang đặt bàn chuyên nghiệp với đầy đủ thông tin khách hàng, thời gian và yêu cầu đặc biệt.
-- **Quick Order Modal**: Đặt món nhanh chóng thông qua cửa sổ Modal mà không cần chuyển trang.
-- **Real-time Calculation**: Tự động tính toán tổng hóa đơn bao gồm số lượng và các tùy chọn đi kèm.
-
-### 🔐 Hệ thống Tài khoản
-- **Authentication**: Trang Đăng nhập và Đăng ký được thiết kế đẹp mắt, hỗ trợ điều hướng thông minh trên Navbar.
-- **User Roles**: Phân biệt trạng thái hiển thị giữa khách vãng lai và quản trị viên (Admin).
+Dự án được xây dựng theo mô hình **Client-Server** hiện đại:
+- **Frontend**: ReactJS (Vite) + SCSS Modules (Giao diện người dùng & Quản trị).
+- **Backend**: NodeJS (Express) + MongoDB (Cơ sở dữ liệu) + Socket.io (Xử lý thời gian thực).
 
 ---
 
-## 🛠 Công Nghệ Sử Dụng
+## 🚀 Tính Năng Chính
 
-### Frontend
-- **Core**: ReactJS (Vite)
-- **Styling**: SCSS (Modules), Animation CSS3
-- **Routing**: React Router DOM v6
-- **Icons**: FontAwesome, Emoji Unicode
-- **Images**: Unsplash API (Demo data)
+### 1. Dành cho Khách hàng (Customer)
+- **E-Menu**: Xem thực đơn, lọc theo danh mục, tìm kiếm món ăn.
+- **Order tại bàn**: Gọi món trực tiếp qua máy tính bảng (Tablet) tại bàn sau khi nhập mã PIN.
+- **Theo dõi đơn hàng**: Xem trạng thái món ăn (Đang chờ, Đang chế biến, Hoàn thành) theo thời gian thực.
+- **Yêu cầu thanh toán**: Gửi thông báo thanh toán tới quản lý.
 
-### Backend (Đang phát triển)
-- NodeJS, Express
-- MongoDB / PostgreSQL
-- Socket.io (Real-time updates)
+### 2. Dành cho Đầu bếp (Chef)
+- **Màn hình bếp**: Tiếp nhận đơn hàng mới tức thì qua Socket.io.
+- **Cập nhật trạng thái**: Đánh dấu món ăn đã hoàn thành để phục vụ.
+- **Quản lý kho món**: Đánh dấu món ăn "Hết hàng" (Sold out) ngay trên hệ thống.
+
+### 3. Dành cho Quản lý (Manager)
+- **Quản lý sơ đồ bàn**: Mở bàn, cấp mã PIN cho khách, gộp bàn, tách bàn.
+- **Xác nhận thanh toán**: Tiếp nhận yêu cầu và xác nhận hóa đơn của khách.
+
+### 4. Dành cho Quản trị viên (Admin)
+- **Dashboard**: Thống kê doanh thu, số lượng đơn hàng.
+- **Quản lý thực đơn**: Thêm, sửa, xóa món ăn và danh mục.
+- **Quản lý nhân sự**: Cấp tài khoản và phân quyền (Admin, Manager, Chef).
 
 ---
 
-## 📂 Cấu Trúc Thư Mục Chính
+## 🛠️ Công Nghệ Sử Dụng
+
+| Thành phần | Công nghệ |
+| :--- | :--- |
+| **Frontend** | React 19, Vite, SCSS, React Router 7, Socket.io Client |
+| **Backend** | NodeJS, Express, Mongoose, Socket.io |
+| **Database** | MongoDB Cloud (Atlas) |
+| **Tooling** | ESLint, Prettier, Git |
+
+---
+
+## 📦 Cấu Trúc Dự Án
 
 ```text
-src/
-├── assets/          # Tài nguyên tĩnh (Styles, Images)
-├── components/      # Các component dùng chung (Modal, Header, Footer...)
-├── constants/       # Dữ liệu tĩnh và cấu hình
-├── pages/           # Các trang chính (Home, Menu, Reservation, Auth, Admin)
-├── routes/          # Cấu hình hệ thống định tuyến
-└── App.jsx          # Component gốc của ứng dụng
+restaurant-management/
+├── backend/            # Mã nguồn Server & API
+├── frontend/           # Mã nguồn Giao diện React
+├── .gitignore          # Cấu hình bỏ qua file trong Git
+└── readme.md           # Tài liệu hướng dẫn chính
 ```
 
 ---
 
-## 🚀 Hướng Dẫn Cài Đặt
+## 🏁 Hướng Dẫn Cài Đặt & Chạy Dự Án
 
-1. **Clone repository**:
-   ```bash
-   git clone https://github.com/Vinhdev04/restaurant-management.git
-   ```
+### 1. Yêu cầu hệ thống
+- NodeJS (v16+)
+- MongoDB (Local hoặc Cloud Atlas)
 
-2. **Cài đặt dependencies**:
-   ```bash
-   cd restaurant-management/frontend
-   npm install
-   ```
+### 2. Cấu hình môi trường (.env)
+Tạo file `.env` trong thư mục `backend/` và `frontend/` dựa trên các biến sau:
 
-3. **Chạy ứng dụng ở môi trường development**:
-   ```bash
-   npm run dev
-   ```
+**Backend (.env):**
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+DEFAULT_PASSWORD=123
+```
+
+**Frontend (.env):**
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_SOCKET_URL=http://localhost:5000
+```
+
+### 3. Khởi chạy
+**Chạy Backend:**
+```bash
+cd backend
+npm install
+npm start
+```
+
+**Chạy Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
-## 📝 Ghi Chú Phát Triển
-Dự án đang trong quá trình hoàn thiện các tính năng Backend và kết nối Real-time. Mọi đóng góp hoặc báo lỗi vui lòng tạo Issue trên GitHub.
+## 📝 Ghi Chú
+Dự án sử dụng **Socket.io** để đồng bộ dữ liệu Real-time giữa Khách hàng - Bếp - Quản lý. Vui lòng đảm bảo Backend chạy trước khi mở Frontend.
 
 **Phát triển bởi Vinhdev04** 🚀

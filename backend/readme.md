@@ -1,32 +1,59 @@
-backend/
-├── src/
-│   ├── config/             # Kết nối Database & Socket.io 
-│   ├── controllers/        # Tiếp nhận Request từ 4 Actor [cite: 2, 10]
-│   │   ├── admin.controller.js
-│   │   ├── chef.controller.js
-│   │   ├── manager.controller.js
-│   │   └── customer.controller.js
-│   ├── services/           # Logic nghiệp vụ lõi (Gộp bàn, Tính điểm...) [cite: 2, 10]
-│   │   ├── tableService.js
-│   │   ├── orderService.js
-│   │   ├── menuService.js
-│   │   └── paymentService.js [cite: 3]
-│   ├── models/             # Schema: User, Table, Menu, Order, Customer 
-│   ├── routes/             # Định tuyến API v1 [cite: 6, 11]
-│   ├── middlewares/        # Auth (JWT) & Phân quyền (Role) [cite: 7, 12]
-│   ├── sockets/            # Xử lý sự kiện Real-time (Bếp báo xong...) [cite: 3, 13]
-│   ├── utils/              # Hàm hỗ trợ (Tính điểm, Format tiền) [cite: 7, 13]
-│   └── server.js           # File chạy chính [cite: 8, 13]
-└── .env                    # Biến môi trường (DB_URI, JWT_SECRET) [cite: 8, 14]
+# 🚀 RMS Backend - NodeJS API Server
+
+Server xử lý logic nghiệp vụ, kết nối cơ sở dữ liệu và quản lý giao tiếp Real-time cho hệ thống quản lý nhà hàng.
+
 ---
-backend/src/
-├── controllers/
-│   └── admin.controller.js  # Điều hướng yêu cầu từ Dashboard [cite: 2, 10]
-├── services/
-│   ├── menuService.js       # Logic xử lý món ăn [cite: 3, 10]
-│   ├── tableService.js      # Logic tạo bàn/khu vực [cite: 2, 10]
-│   └── reportService.js     # Logic tính toán doanh thu/thống kê 
-├── models/
-│   ├── Menu.model.js        # Schema món ăn [cite: 5, 11]
-│   ├── Table.model.js       # Schema bàn ăn [cite: 5, 11]
-│   └── User.model.js        # Schema nhân sự [cite: 4, 11]
+
+## 🛠️ Tech Stack
+- **Runtime**: NodeJS
+- **Framework**: ExpressJS
+- **Database**: MongoDB (Mongoose ODM)
+- **Real-time**: Socket.io
+- **Environment**: Dotenv
+
+---
+
+## 📂 Cấu Trúc Thư Mục
+
+```text
+backend/
+├── controllers/    # Xử lý logic cho các yêu cầu API (Admin, Chef, Manager, Customer, Auth)
+├── models/         # Định nghĩa cấu trúc dữ liệu (Schema) của MongoDB
+├── routes/         # Định tuyến các đường dẫn API
+├── services/       # Các dịch vụ bổ trợ xử lý logic phức tạp
+├── .env            # Cấu hình biến môi trường (Không commit)
+├── app.js          # Điểm khởi đầu của ứng dụng
+├── seed.js         # Script tạo dữ liệu mẫu ban đầu
+└── package.json    # Quản lý dependencies và scripts
+```
+
+---
+
+## 🔑 Các API Chính
+
+- `/api/auth`: Đăng nhập, phân quyền người dùng.
+- `/api/admin`: Quản lý thực đơn, bàn và xem báo cáo doanh thu.
+- `/api/customer`: Đặt món, kiểm tra mã PIN, yêu cầu thanh toán.
+- `/api/chef`: Lấy danh sách món chờ chế biến, cập nhật trạng thái món.
+- `/api/manager`: Quản lý sơ đồ bàn, xác nhận thanh toán.
+
+---
+
+## 📡 Socket.io Events
+
+Hệ thống sử dụng các sự kiện sau để đồng bộ Real-time:
+- `NEW_ORDER_RECEIVED`: Thông báo cho Bếp và Quản lý khi có đơn hàng mới.
+- `ITEM_COMPLETED`: Thông báo cho Khách hàng khi món ăn đã xong.
+- `PAYMENT_REQUESTED`: Thông báo cho Quản lý khi khách yêu cầu tính tiền.
+- `PAYMENT_CONFIRMED`: Thông báo cho Khách hàng và Quản lý khi thanh toán hoàn tất.
+
+---
+
+## 🚀 Hướng Dẫn Chạy
+
+1. Cài đặt thư viện: `npm install`
+2. Cấu hình file `.env` với `MONGODB_URI`.
+3. (Tùy chọn) Tạo dữ liệu mẫu: `npm run seed`
+4. Khởi chạy server: `npm start`
+
+Server sẽ mặc định chạy tại: `http://localhost:5000`
