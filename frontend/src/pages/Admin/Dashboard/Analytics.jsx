@@ -1,27 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Analytics.module.scss';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const Analytics = () => {
-  const stats = [
-    { title: 'Total Revenue', value: '$48,250', change: '+18.2%', icon: '💵', color: 'success' },
-    { title: 'Total Orders', value: '1,248', change: '+12.5%', icon: '🛍️', color: 'info' },
-    { title: 'Avg Order Value', value: '$38.65', change: '+5.3%', icon: '📈', color: 'warning' },
-    { title: 'Customer Rating', value: '4.8', change: '+0.2', icon: '⭐', color: 'error' },
-  ];
+  const [stats, setStats] = useState([
+    { title: 'Doanh thu tổng', value: '$0', change: '0%', icon: '💵', color: 'success' },
+    { title: 'Tổng đơn hàng', value: '0', change: '0%', icon: '🛍️', color: 'info' },
+    { title: 'Thực đơn', value: '0', change: '0%', icon: '🍽️', color: 'warning' },
+    { title: 'Đánh giá khách hàng', value: '4.8', change: '+0.2', icon: '⭐', color: 'error' },
+  ]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${API_URL}/admin/stats`);
+        if (res.ok) {
+          const data = await res.json();
+          setStats([
+            { title: 'Doanh thu tổng', value: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalOrders * 150000)}`, change: '+18.2%', icon: '💵', color: 'success' },
+            { title: 'Tổng đơn hàng', value: `${data.totalOrders}`, change: '+12.5%', icon: '🛍️', color: 'info' },
+            { title: 'Thực đơn', value: `${data.totalMenu} món`, change: '+5.3%', icon: '🍽️', color: 'warning' },
+            { title: 'Khách hàng', value: data.customers, change: '+0.2', icon: '👥', color: 'error' },
+          ]);
+        }
+      } catch (error) {
+        console.error("Lỗi tải thống kê:", error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const topItems = [
-    { rank: 1, name: 'Grilled Salmon', orders: '342 orders', price: '$9.908', change: '+15%' },
-    { rank: 2, name: 'Ribeye Steak', orders: '298 orders', price: '$12.801', change: '+22%' },
-    { rank: 3, name: 'Truffle Pasta', orders: '256 orders', price: '$8.438', change: '+18%' },
-    { rank: 4, name: 'Caesar Salad', orders: '412 orders', price: '$5.352', change: '-8%' },
-    { rank: 5, name: 'Tiramisu', orders: '287 orders', price: '$2.867', change: '+12%' },
+    { rank: 1, name: 'Bò Lúc Lắc', orders: '342 đơn', price: '250.000đ', change: '+15%' },
+    { rank: 2, name: 'Cá Hồi Áp Chảo', orders: '298 đơn', price: '320.000đ', change: '+22%' },
+    { rank: 3, name: 'Súp Hải Sản', orders: '256 đơn', price: '85.000đ', change: '+18%' },
+    { rank: 4, name: 'Gà Quay Lu', orders: '412 đơn', price: '280.000đ', change: '-8%' },
+    { rank: 5, name: 'Chè Khúc Bạch', orders: '287 đơn', price: '45.000đ', change: '+12%' },
   ];
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Analytics</h1>
-        <p className={styles.subtitle}>Track your restaurant performance and insights</p>
+        <h1 className={styles.title}>Phân tích & Thống kê</h1>
+        <p className={styles.subtitle}>Theo dõi hiệu quả kinh doanh và thông tin chi tiết về nhà hàng của bạn</p>
       </div>
 
       {/* Stats Cards */}
@@ -41,9 +63,9 @@ const Analytics = () => {
       <div className={styles.chartsGrid}>
         {/* Revenue Overview */}
         <div className={styles.chartCard}>
-          <h3 className={styles.cardTitle}>Revenue Overview</h3>
+          <h3 className={styles.cardTitle}>Tổng quan doanh thu</h3>
           <div className={styles.barChart}>
-            {['January', 'February', 'March', 'April', 'May', 'June'].map((month, index) => (
+            {['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'].map((month, index) => (
               <div key={month} className={styles.barRow}>
                 <span className={styles.barLabel}>{month}</span>
                 <div className={styles.barTrack}>
@@ -52,7 +74,7 @@ const Analytics = () => {
                     style={{ width: `${Math.random() * 40 + 60}%` }}
                   ></div>
                 </div>
-                <span className={styles.barValue}>${(Math.random() * 10 + 38).toFixed(3)}</span>
+                <span className={styles.barValue}>{ (Math.random() * 50 + 100).toFixed(0) }tr</span>
               </div>
             ))}
           </div>
@@ -60,7 +82,7 @@ const Analytics = () => {
 
         {/* Top Performing Items */}
         <div className={styles.chartCard}>
-          <h3 className={styles.cardTitle}>Top Performing Items</h3>
+          <h3 className={styles.cardTitle}>Món ăn bán chạy</h3>
           <div className={styles.topItemsList}>
             {topItems.map((item) => (
               <div key={item.rank} className={styles.topItem}>

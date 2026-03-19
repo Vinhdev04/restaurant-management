@@ -3,19 +3,26 @@ import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.scss';
 
 const Sidebar = () => {
+  const [currentUser, setCurrentUser] = React.useState(null);
+
+  React.useEffect(() => {
+    const savedUser = localStorage.getItem('restaurant_user');
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+  }, []);
+
   const menuItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
-    { name: 'Reservations', path: '/admin/reservations', icon: '📅' },
-    { name: 'Menu', path: '/admin/menu', icon: '🍴' },
-    { name: 'Staff', path: '/admin/staff', icon: '👥' },
-    { name: 'Analytics', path: '/admin/analytics', icon: '📈' },
-    { name: 'Settings', path: '/admin/settings', icon: '⚙️' },
+    { name: 'Đặt bàn', path: '/admin/reservations', icon: '📅' },
+    { name: 'Thực đơn', path: '/admin/menu', icon: '🍴' },
+    { name: 'Nhân viên', path: '/admin/staff', icon: '👥' },
+    { name: 'Phân tích', path: '/admin/analytics', icon: '📈' },
+    { name: 'Cài đặt', path: '/admin/settings', icon: '⚙️' },
   ];
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logoContainer}>
-        <div className={styles.logoIcon}>🛠️</div>
+        <div className={styles.logoIcon}>🍴</div>
         <div className={styles.logoText}>
           <span className={styles.title}>RestaurantHub</span>
           <span className={styles.subtitle}>Management System</span>
@@ -40,13 +47,21 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className={styles.userProfile}>
-        <div className={styles.avatar}>S</div>
-        <div className={styles.userInfo}>
-          <span className={styles.userName}>saas</span>
-          <span className={styles.userRole}>Admin</span>
+      {currentUser && (
+        <div className={styles.userProfile}>
+          <div className={styles.avatar}>
+            <img 
+              src={`https://ui-avatars.com/api/?name=${currentUser.username}&background=D4734A&color=fff`} 
+              alt="Avatar" 
+              style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+            />
+          </div>
+          <div className={styles.userInfo}>
+            <span className={styles.userName}>{currentUser.username}</span>
+            <span className={styles.userRole}>{currentUser.role}</span>
+          </div>
         </div>
-      </div>
+      )}
     </aside>
   );
 };

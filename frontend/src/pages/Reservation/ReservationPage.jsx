@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styles from './ReservationPage.module.scss';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const ReservationPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -11,6 +13,7 @@ const ReservationPage = () => {
     guests: '2',
     notes: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,10 +23,27 @@ const ReservationPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Reservation data:', formData);
-    alert('Cảm ơn bạn! Yêu cầu đặt bàn của bạn đã được gửi đi. Chúng tôi sẽ sớm liên hệ lại để xác nhận.');
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`${API_URL}/reservation/add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert('Cảm ơn bạn! Yêu cầu đặt bàn của bạn đã được gửi đi. Chúng tôi sẽ sớm liên hệ lại để xác nhận.');
+        setFormData({ name: '', email: '', phone: '', date: '', time: '', guests: '2', notes: '' });
+      } else {
+        alert(data.message || 'Lỗi khi gửi yêu cầu đặt bàn');
+      }
+    } catch (error) {
+      alert('Lỗi kết nối đến máy chủ!');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -159,7 +179,9 @@ const ReservationPage = () => {
                 ></textarea>
               </div>
 
-              <button type="submit" className={styles.submitBtn}>Xác nhận đặt bàn</button>
+              <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+                {isSubmitting ? 'Đang gửi...' : 'Xác nhận đặt bàn'}
+              </button>
             </form>
           </div>
         </div>

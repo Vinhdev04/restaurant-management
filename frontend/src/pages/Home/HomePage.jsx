@@ -1,16 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './HomePage.module.scss';
-import { features, stats, workflows } from '@constants/homeContent.js';
+import { features, workflows } from '@constants/homeContent.js';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const HomePage = () => {
+  const navigate = useNavigate();
   const [scrollY, setScrollY] = useState(0);
   const [activeFeature, setActiveFeature] = useState(null);
+  const [stats, setStats] = useState([
+    { number: '1000+', label: 'Đơn hàng', icon: '📦' },
+    { number: '500+', label: 'Khách hàng', icon: '🏪' },
+    { number: '4.9/5', label: 'Đánh giá', icon: '⭐' },
+    { number: '24/7', label: 'Hỗ trợ', icon: '💬' }
+  ]);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
 
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${API_URL}/admin/stats`);
+        if (res.ok) {
+          const data = await res.json();
+          setStats([
+            { number: `${data.totalOrders}+`, label: 'Đơn hàng', icon: '📦' },
+            { number: data.customers, label: 'Khách hàng', icon: '🏪' },
+            { number: data.rating, label: 'Đánh giá', icon: '⭐' },
+            { number: '24/7', label: 'Hỗ trợ', icon: '💬' }
+          ]);
+        }
+      } catch (error) {
+        console.error("Lỗi tải thống kê:", error);
+      }
+    };
+
+    fetchStats();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -44,12 +72,12 @@ const HomePage = () => {
             </p>
 
             <div className={styles.heroCta}>
-              <Link to="/reservation" className={styles.btnPrimary}>
-                <span>Đặt bàn ngay</span>
+              <button onClick={() => navigate('/tablet')} className={styles.btnPrimary}>
+                <span>Order tại bàn (Tablet)</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-              </Link>
+              </button>
               <Link to="/menu" className={styles.btnSecondary}>
                 <span>Xem thực đơn</span>
               </Link>
@@ -211,7 +239,7 @@ const HomePage = () => {
               Bắt đầu ngay hôm nay!
             </p>
             <div className={styles.ctaButtons}>
-              <Link to="/admin" className={styles.btnLarge}>
+              <Link to="/login" className={styles.btnLarge}>
                 <span>Trải nghiệm ngay</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>

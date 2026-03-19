@@ -2,16 +2,40 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './AuthPage.module.scss';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState('');
-  const [selectedRole, setSelectedRole] = useState('Administrator');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log('Sign in with:', { fullName, selectedRole });
-    alert(`Xin chào ${fullName}! Bạn đã đăng nhập với vai trò ${selectedRole}.`);
-    navigate('/');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const res = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        localStorage.setItem('restaurant_user', JSON.stringify(data.user)); 
+        // Reload lại trang để App nhận currentUser mới (hoặc dùng context/state nâng cao hơn)
+        window.location.href = data.user.role === 'admin' ? '/admin' : '/staff';
+      } else {
+        setError(data.message || 'Sai tên đăng nhập hoặc mật khẩu!');
+      }
+    } catch (err) {
+      setError('Lỗi kết nối đến máy chủ!');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -21,88 +45,45 @@ const LoginPage = () => {
           <div className={styles.logo}>
             <span className={styles.logoIcon}>🍴</span>
           </div>
-          <h2>Restaurant Manager</h2>
-          <p>Sign in to access your dashboard</p>
+          <h2>ĐĂNG NHẬP HỆ THỐNG</h2>
+          <p>Nhập thông tin tài khoản nhân viên của bạn</p>
         </div>
 
         <form className={styles.authForm} onSubmit={handleSignIn}>
+          {error && <div style={{ color: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.1)', padding: '10px', borderRadius: '5px', marginBottom: '15px', textAlign: 'center', fontSize: '14px' }}>{error}</div>}
+          
           <div className={styles.formGroup}>
-            <label htmlFor="fullName">Full Name</label>
+            <label htmlFor="username">Tên đăng nhập</label>
             <input
               type="text"
-              id="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Enter your name"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Nhập tên đăng nhập..."
               required
             />
           </div>
 
           <div className={styles.formGroup}>
-            <label>Select Role</label>
-            <div className={styles.roleSelection}>
-              <div className={styles.roleOption}>
-                <input
-                  type="radio"
-                  id="admin"
-                  name="role"
-                  value="Administrator"
-                  checked={selectedRole === 'Administrator'}
-                  onChange={() => setSelectedRole('Administrator')}
-                />
-                <label htmlFor="admin" className={styles.roleLabel}>
-                  <div className={styles.roleInfo}>
-                    <strong>Administrator</strong>
-                    <span>Complete system access and management</span>
-                  </div>
-                  <span className={`${styles.roleBadge} ${styles.fullAccess}`}>Full Access</span>
-                </label>
-              </div>
-
-              <div className={styles.roleOption}>
-                <input
-                  type="radio"
-                  id="staff"
-                  name="role"
-                  value="Staff Member"
-                  checked={selectedRole === 'Staff Member'}
-                  onChange={() => setSelectedRole('Staff Member')}
-                />
-                <label htmlFor="staff" className={styles.roleLabel}>
-                  <div className={styles.roleInfo}>
-                    <strong>Staff Member</strong>
-                    <span>Dashboard, reservations, menu, and staff scheduling</span>
-                  </div>
-                  <span className={`${styles.roleBadge} ${styles.limitedAccess}`}>Limited Access</span>
-                </label>
-              </div>
-
-              <div className={styles.roleOption}>
-                <input
-                  type="radio"
-                  id="user"
-                  name="role"
-                  value="User"
-                  checked={selectedRole === 'User'}
-                  onChange={() => setSelectedRole('User')}
-                />
-                <label htmlFor="user" className={styles.roleLabel}>
-                  <div className={styles.roleInfo}>
-                    <strong>User</strong>
-                    <span>View dashboard and menu only</span>
-                  </div>
-                  <span className={`${styles.roleBadge} ${styles.readOnly}`}>Read Only</span>
-                </label>
-              </div>
-            </div>
+            <label htmlFor="password">Mật khẩu</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Nhập mật khẩu..."
+              required
+            />
           </div>
 
-          <button type="submit" className={styles.submitBtn}>Sign In</button>
+          <button type="submit" className={styles.submitBtn} disabled={isLoading}>
+            {isLoading ? 'Đang xử lý...' : 'ĐĂNG NHẬP'}
+          </button>
+          
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <Link to="/" style={{ color: '#7f8c8d', textDecoration: 'none', fontSize: '14px' }}>← Quay lại trang chủ</Link>
+          </div>
         </form>
-
-        <div className={styles.authFooter}>
-          <p>Demo mode - No password required</p>
-        </div>
       </div>
     </div>
   );

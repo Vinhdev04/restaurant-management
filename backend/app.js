@@ -62,6 +62,8 @@ const connectDB = async () => {
         console.log(`✅ Worker ${process.pid}: Kết nối MongoDB thành công!`);
     } catch (err) {
         console.error(`❌ Worker ${process.pid}: Lỗi kết nối MongoDB:`, err.message);
+        // Ngắt buffer nếu không kết nối được để trả lỗi ngay lập tức thay vì treo
+        mongoose.set('bufferCommands', false);
     }
 };
 

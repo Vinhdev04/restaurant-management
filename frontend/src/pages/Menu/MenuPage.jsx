@@ -6,11 +6,14 @@ import SkeletonItem from './SkeletonItem';
 import Modal from '@components/shared/Modal/Modal';
 import OrderForm from './OrderForm/OrderForm';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const MenuPage = () => {
   const { category } = useParams();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [backendMenuItems, setBackendMenuItems] = useState([]);
   const [displayItems, setDisplayItems] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -18,6 +21,15 @@ const MenuPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const loaderRef = useRef(null);
   const itemsPerPage = 6;
+
+  // Map internal IDs to URL params for filter buttons
+  const reverseCategoryMap = {
+    'starters': 'appetizers',
+    'main-courses': 'main-dishes',
+    'drinks': 'beverages',
+    'desserts': 'desserts',
+    'all': ''
+  };
 
   const handleOpenOrderModal = (item) => {
     setSelectedItem(item);
@@ -40,15 +52,6 @@ const MenuPage = () => {
     handleCloseModal();
   };
 
-  // Map internal IDs to URL params for filter buttons
-  const reverseCategoryMap = {
-    'starters': 'appetizers',
-    'main-courses': 'main-dishes',
-    'drinks': 'beverages',
-    'desserts': 'desserts',
-    'all': ''
-  };
-
   const handleFilterClick = (catId) => {
     const urlParam = reverseCategoryMap[catId];
     if (urlParam) {
@@ -59,7 +62,6 @@ const MenuPage = () => {
     setPage(1);
   };
 
-  // Map URL params to internal category IDs
   const categoryMap = {
     'appetizers': 'starters',
     'main-dishes': 'main-courses',
@@ -68,30 +70,62 @@ const MenuPage = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
+    const fetchMenu = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`${API_URL}/admin/menu/all`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            // Map backend data to match Frontend structure
+            const mappedData = data.map(item => ({
+              id: item._id,
+              name: item.name,
+              price: item.price,
+              categoryId: item.category === 'Món chính' ? 'main-courses' : 
+                          item.category === 'Khai vị' ? 'starters' :
+                          item.category === 'Đồ uống' ? 'drinks' :
+                          item.category === 'Tráng miệng' ? 'desserts' : 'main-courses',
+              image: item.image,
+              description: item.description || `Món ${item.name} tươi ngon mỗi ngày.`,
+              options: [],
+              recommendations: []
+            }));
+            
+            // Gộp với dữ liệu tĩnh để demo
+            const combinedMenu = [...menuItems, ...mappedData];
+            setBackendMenuItems(combinedMenu);
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi tải menu:", error);
+        setBackendMenuItems(menuItems); // Fallback to static if error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenu();
+  }, []);
+
+  useEffect(() => {
     if (category && categoryMap[category]) {
       setActiveCategory(categoryMap[category]);
     } else {
       setActiveCategory('all');
     }
     setPage(1);
-    
-    // Simulate initial fetch
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
   }, [category]);
 
   const allFilteredItems = activeCategory === 'all' 
-    ? menuItems 
-    : menuItems.filter(item => item.categoryId === activeCategory);
+    ? backendMenuItems 
+    : backendMenuItems.filter(item => item.categoryId === activeCategory);
 
   useEffect(() => {
     const newItems = allFilteredItems.slice(0, page * itemsPerPage);
     setDisplayItems(newItems);
     setHasMore(newItems.length < allFilteredItems.length);
-  }, [page, activeCategory]);
+  }, [page, activeCategory, backendMenuItems]);
 
   // Infinite Scroll Logic
   useEffect(() => {

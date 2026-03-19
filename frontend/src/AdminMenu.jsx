@@ -52,15 +52,39 @@ function AdminMenu({ socket }) { // ĐÃ THÊM PROP SOCKET Ở ĐÂY
   const fetchMenu = async () => {
     try {
       const res = await fetch(`${API_URL}/admin/menu/all`);
-      if(res.ok) setMenuItems(await res.json());
-    } catch (error) { console.error("Lỗi tải menu:", error); }
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setMenuItems(data);
+        } else {
+          setMenuItems([]);
+        }
+      } else {
+        setMenuItems([]);
+      }
+    } catch (error) {
+      console.error("Lỗi tải menu:", error);
+      setMenuItems([]);
+    }
   };
 
   const fetchTables = async () => {
     try {
       const res = await fetch(`${API_URL}/manager/tables`);
-      if (res.ok) setTables(await res.json());
-    } catch (error) { console.error("Lỗi tải bàn:", error); }
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setTables(data);
+        } else {
+          setTables([]);
+        }
+      } else {
+        setTables([]);
+      }
+    } catch (error) {
+      console.error("Lỗi tải bàn:", error);
+      setTables([]);
+    }
   };
 
   const fetchRevenue = async () => {
@@ -68,9 +92,18 @@ function AdminMenu({ socket }) { // ĐÃ THÊM PROP SOCKET Ở ĐÂY
       const res = await fetch(`${API_URL}/admin/revenue`);
       if (res.ok) {
         const data = await res.json();
-        setRevenueData(data);
+        if (Array.isArray(data)) {
+          setRevenueData(data);
+        } else {
+          setRevenueData([]);
+        }
+      } else {
+        setRevenueData([]);
       }
-    } catch (error) { console.error("Lỗi tải doanh thu:", error); }
+    } catch (error) {
+      console.error("Lỗi tải doanh thu:", error);
+      setRevenueData([]);
+    }
   };
 
   const handleAddMenu = async (e) => {

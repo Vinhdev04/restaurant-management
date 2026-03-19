@@ -14,14 +14,28 @@ function Manager({ socket }) {
   const fetchTables = async () => {
     try {
       const res = await fetch(`${API_URL}/manager/tables`);
-      if (res.ok) setTables(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setTables(data);
+        } else {
+          setTables([]);
+        }
+      }
     } catch (error) { console.log("Lỗi tải danh sách bàn"); }
   };
 
   const fetchPending = async () => {
     try {
       const res = await fetch(`${API_URL}/manager/payments/pending`);
-      if (res.ok) setPendingPayments(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setPendingPayments(data);
+        } else {
+          setPendingPayments([]);
+        }
+      }
     } catch (error) { console.log("Lỗi tải danh sách đơn"); }
   };
 

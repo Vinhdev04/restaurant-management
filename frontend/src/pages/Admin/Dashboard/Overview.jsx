@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Dashboard.module.scss';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const StatCard = ({ title, value, icon, color }) => (
   <div className={styles.statCard} style={{ borderLeft: `4px solid ${color}` }}>
@@ -12,20 +14,37 @@ const StatCard = ({ title, value, icon, color }) => (
 );
 
 const Overview = () => {
-  const stats = [
-    { title: 'Doanh thu ngày', value: '15,200,000đ', icon: '💰', color: '#D4734A' },
-    { title: 'Đơn hàng mới', value: '24', icon: '🛒', color: '#E8925C' },
-    { title: 'Khách hàng', value: '12', icon: '👥', color: '#C9A961' },
-    { title: 'Bàn đang sử dụng', value: '8/20', icon: '🍽️', color: '#8B9F7F' }
-  ];
+  const [stats, setStats] = useState([
+    { title: 'Thực đơn', value: '...', icon: '🍽️', color: '#D4734A' },
+    { title: 'Tổng bàn', value: '...', icon: '🪑', color: '#E8925C' },
+    { title: 'Đơn hàng', value: '...', icon: '🛒', color: '#C9A961' },
+    { title: 'Đánh giá', value: '4.9/5', icon: '⭐', color: '#8B9F7F' }
+  ]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`${API_URL}/admin/stats`);
+        if (res.ok) {
+          const data = await res.json();
+          setStats([
+            { title: 'Thực đơn', value: `${data.totalMenu} món`, icon: '🍽️', color: '#D4734A' },
+            { title: 'Tổng bàn', value: `${data.totalTables} bàn`, icon: '🪑', color: '#E8925C' },
+            { title: 'Đơn hàng', value: `${data.totalOrders}`, icon: '🛒', color: '#C9A961' },
+            { title: 'Khách hàng', value: data.customers, icon: '👥', color: '#8B9F7F' }
+          ]);
+        }
+      } catch (error) {
+        console.error("Lỗi tải thống kê:", error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
     <div className={styles.dashboardOverview}>
       <header className={styles.overviewHeader}>
         <h2>Tổng Quan Hệ Thống</h2>
-        <div className={styles.datePicker}>
-          <input type="date" defaultValue={new Date().toISOString().split('T')[0]} />
-        </div>
       </header>
 
       <div className={styles.statsGrid}>

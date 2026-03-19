@@ -6,9 +6,14 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Giả lập trạng thái đăng nhập
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    const savedUser = localStorage.getItem('restaurant_user');
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+    }
+
     const handleScroll = () => {
       const offset = window.scrollY;
       setScrolled(offset > 50);
@@ -17,6 +22,12 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('restaurant_user');
+    setCurrentUser(null);
+    window.location.href = '/';
+  };
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -81,24 +92,37 @@ const Header = () => {
 
         {/* Action Buttons */}
         <div className={styles.headerActions}>
-          <button className={styles.btnNotification}>
-            <span className={styles.notificationIcon}>🔔</span>
-            <span className={styles.notificationBadge}>3</span>
-          </button>
-          
-          {isLoggedIn ? (
-            <Link to="/admin" className={styles.userProfile}>
-              <img 
-                src="https://ui-avatars.com/api/?name=Admin&background=D4734A&color=fff" 
-                alt="User Avatar" 
-                className={styles.userAvatar}
-              />
-              <span className={styles.userName}>Admin</span>
-            </Link>
+          {currentUser ? (
+            <div className={styles.userProfile}>
+              <div className={styles.userAvatarContainer} onMouseEnter={() => setActiveDropdown('user')} onMouseLeave={() => setActiveDropdown(null)}>
+                <img 
+                  src={`https://ui-avatars.com/api/?name=${currentUser.username}&background=D4734A&color=fff`} 
+                  alt="User Avatar" 
+                  className={styles.userAvatar}
+                />
+                <span className={styles.userName}>{currentUser.username}</span>
+                
+                {activeDropdown === 'user' && (
+                  <div className={`${styles.dropdown} ${styles.dropdownActive}`}>
+                    <ul className={styles.dropdownList}>
+                      <li className={styles.dropdownItem}>
+                        <Link to={currentUser.role === 'admin' ? '/admin' : '/staff'} className={styles.dropdownLink}>
+                          Dashboard
+                        </Link>
+                      </li>
+                      <li className={styles.dropdownItem}>
+                        <button onClick={handleLogout} className={styles.dropdownLink} style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer' }}>
+                          Đăng xuất
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
           ) : (
             <div className={styles.authButtons}>
               <Link to="/login" className={styles.btnLogin}>Đăng nhập</Link>
-              <Link to="/register" className={styles.btnRegister}>Đăng ký</Link>
             </div>
           )}
         </div>

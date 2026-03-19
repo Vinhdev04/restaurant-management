@@ -20,9 +20,22 @@ function Tablet({ socket }) {
   const fetchMenu = async () => {
     try {
       const res = await fetch(`${API_URL}/admin/menu/all`);
-      const data = await res.json();
-      setMenuItems(data); 
-    } catch (error) {}
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setMenuItems(data);
+        } else {
+          console.error("Dữ liệu menu không phải là mảng:", data);
+          setMenuItems([]);
+        }
+      } else {
+        console.error("Lỗi tải menu:", res.status);
+        setMenuItems([]);
+      }
+    } catch (error) {
+      console.error("Lỗi kết nối khi tải menu:", error);
+      setMenuItems([]);
+    }
   };
 
   useEffect(() => { fetchMenu(); }, []);

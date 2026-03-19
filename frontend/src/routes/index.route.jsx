@@ -1,22 +1,27 @@
 import React, { lazy } from 'react';
 
 // Layouts
-const UserLayout = lazy(() => import('@/components/shared/Layout/UserLayout'));
-const AdminLayout = lazy(() => import('@/components/admin/Layout/AdminLayout'));
+import UserLayout from '@/components/shared/Layout/UserLayout';
+import AdminLayout from '@/components/admin/Layout/AdminLayout';
 
 // Pages
-const HomePage = lazy(() => import('@/pages/Home/HomePage'));
-const MenuPage = lazy(() => import('@/pages/Menu/MenuPage'));
-const ReservationPage = lazy(() => import('@/pages/Reservation/ReservationPage'));
-const LoginPage = lazy(() => import('@/pages/Auth/LoginPage'));
-const RegisterPage = lazy(() => import('@/pages/Auth/RegisterPage'));
-const NotFoundPage = lazy(() => import('@/pages/NotFoundPage/NotFoundPage'));
+import HomePage from '@/pages/Home/HomePage.jsx';
+import MenuPage from '@/pages/Menu/MenuPage.jsx';
+import ReservationPage from '@/pages/Reservation/ReservationPage.jsx';
+import LoginPage from '@/pages/Auth/LoginPage.jsx';
+import RegisterPage from '@/pages/Auth/RegisterPage.jsx';
+import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage.jsx';
+import Tablet from '@/Tablet.jsx';
 
 // Admin Pages
-const Analytics = lazy(() => import('@/pages/Admin/Dashboard/Analytics'));
-const MenuManagement = lazy(() => import('@/pages/Admin/Dashboard/MenuManagement'));
-const Reservations = lazy(() => import('@/pages/Admin/Dashboard/Reservations'));
-const Settings = lazy(() => import('@/pages/Admin/Dashboard/Settings'));
+import Analytics from '@/pages/Admin/Dashboard/Analytics.jsx';
+import MenuManagement from '@/pages/Admin/Dashboard/MenuManagement.jsx';
+import Reservations from '@/pages/Admin/Dashboard/Reservations.jsx';
+import Settings from '@/pages/Admin/Dashboard/Settings.jsx';
+
+// Staff Pages
+import Manager from '@/Manager.jsx';
+import Chef from '@/Chef.jsx';
 
 const routes = [
     // User Routes
@@ -28,6 +33,7 @@ const routes = [
             { path: 'menu', element: <MenuPage /> },
             { path: 'menu/:category', element: <MenuPage /> },
             { path: 'reservation', element: <ReservationPage /> },
+            { path: 'tablet', element: <Tablet /> },
         ]
     },
 
@@ -42,8 +48,18 @@ const routes = [
             { path: 'menu', element: <MenuManagement /> },
             { path: 'reservations', element: <Reservations /> },
             { path: 'settings', element: <Settings /> },
-            // Staff page placeholder
-            { path: 'staff', element: <div style={{ padding: '20px' }}>Staff Management (Coming Soon)</div> },
+            { path: 'staff', element: <div style={{ padding: '20px' }}>Staff Management</div> },
+        ]
+    },
+
+    // Staff Routes
+    {
+        path: '/staff',
+        element: <AdminLayout />, // Re-use AdminLayout for staff
+        children: [
+            { index: true, element: <Manager /> },
+            { path: 'manager', element: <Manager /> },
+            { path: 'chef', element: <Chef /> },
         ]
     },
 

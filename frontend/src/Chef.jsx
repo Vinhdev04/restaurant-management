@@ -12,25 +12,49 @@ function Chef({ socket }) {
   const fetchPendingOrders = async () => {
     try {
       const res = await fetch(`${API_URL}/chef/pending`);
-      const data = await res.json();
-      setPendingOrders(data); 
-    } catch (error) { console.log("Lỗi tải đơn hàng đang chờ"); }
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setPendingOrders(data);
+        } else {
+          setPendingOrders([]);
+        }
+      } else {
+        setPendingOrders([]);
+      }
+    } catch (error) {}
   };
 
   const fetchCompletedOrders = async () => {
     try {
       const res = await fetch(`${API_URL}/chef/completed`);
-      const data = await res.json();
-      setCompletedOrders(data);
-    } catch (error) { console.log("Lỗi tải đơn hàng đã hoàn thành"); }
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCompletedOrders(data);
+        } else {
+          setCompletedOrders([]);
+        }
+      } else {
+        setCompletedOrders([]);
+      }
+    } catch (error) {}
   };
 
   const fetchMenu = async () => {
     try {
       const res = await fetch(`${API_URL}/admin/menu/all`); 
-      const data = await res.json();
-      setMenuItems(data);
-    } catch (error) { console.log("Lỗi tải menu cho bếp"); }
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setMenuItems(data);
+        } else {
+          setMenuItems([]);
+        }
+      } else {
+        setMenuItems([]);
+      }
+    } catch (error) {}
   };
 
   useEffect(() => {

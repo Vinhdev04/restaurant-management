@@ -62,7 +62,7 @@ const PromotionPopup = () => {
         
         <div className={styles.imageWrapper}>
           <img 
-            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=800" 
+            src="https://placehold.co/800x400?text=Giảm+Giá+30%" 
             alt="Khuyến mãi đặc biệt" 
           />
           <div className={styles.discountBadge}>GIẢM 30%</div>
