@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 function Manager({ socket }) {
   const [activeTab, setActiveTab] = useState('tables');
   const [tables, setTables] = useState([]);
@@ -11,14 +13,14 @@ function Manager({ socket }) {
 
   const fetchTables = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/manager/tables');
+      const res = await fetch(`${API_URL}/manager/tables`);
       if (res.ok) setTables(await res.json());
     } catch (error) { console.log("Lỗi tải danh sách bàn"); }
   };
 
   const fetchPending = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/manager/payments/pending');
+      const res = await fetch(`${API_URL}/manager/payments/pending`);
       if (res.ok) setPendingPayments(await res.json());
     } catch (error) { console.log("Lỗi tải danh sách đơn"); }
   };
@@ -40,7 +42,7 @@ function Manager({ socket }) {
 
   const handleOpenTable = async (tableId) => {
     try {
-      const res = await fetch('http://localhost:5000/api/manager/table/open', {
+      const res = await fetch(`${API_URL}/manager/table/open`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tableId })
@@ -55,7 +57,7 @@ function Manager({ socket }) {
 
   const handleConfirmPayment = async (orderId, paymentMethod) => {
     try {
-      const res = await fetch('http://localhost:5000/api/manager/payments/confirm', {
+      const res = await fetch(`${API_URL}/manager/payments/confirm`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId, paymentMethod })
@@ -71,7 +73,7 @@ function Manager({ socket }) {
   const handleMergeEmptyTables = async () => {
     if (!mergeTable1 || !mergeTable2 || mergeTable1 === mergeTable2) return alert("Vui lòng chọn 2 bàn khác nhau!");
     try {
-      const res = await fetch('http://localhost:5000/api/manager/table/merge', {
+      const res = await fetch(`${API_URL}/manager/table/merge`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ table1: mergeTable1, table2: mergeTable2 })
@@ -88,7 +90,7 @@ function Manager({ socket }) {
   const handleUnmergeTable = async (tableId) => {
     if(!window.confirm(`Bạn có chắc muốn tách bàn [${tableId}] về lại trạng thái ban đầu?`)) return;
     try {
-      const res = await fetch('http://localhost:5000/api/manager/table/unmerge', {
+      const res = await fetch(`${API_URL}/manager/table/unmerge`, {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ tableId })

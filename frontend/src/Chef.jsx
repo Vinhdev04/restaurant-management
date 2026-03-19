@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 function Chef({ socket }) {
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' hoặc 'menu'
 
@@ -9,7 +11,7 @@ function Chef({ socket }) {
 
   const fetchPendingOrders = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/chef/pending');
+      const res = await fetch(`${API_URL}/chef/pending`);
       const data = await res.json();
       setPendingOrders(data); 
     } catch (error) { console.log("Lỗi tải đơn hàng đang chờ"); }
@@ -17,7 +19,7 @@ function Chef({ socket }) {
 
   const fetchCompletedOrders = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/chef/completed');
+      const res = await fetch(`${API_URL}/chef/completed`);
       const data = await res.json();
       setCompletedOrders(data);
     } catch (error) { console.log("Lỗi tải đơn hàng đã hoàn thành"); }
@@ -25,7 +27,7 @@ function Chef({ socket }) {
 
   const fetchMenu = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/menu/all'); 
+      const res = await fetch(`${API_URL}/admin/menu/all`); 
       const data = await res.json();
       setMenuItems(data);
     } catch (error) { console.log("Lỗi tải menu cho bếp"); }
@@ -68,7 +70,7 @@ function Chef({ socket }) {
   // HÀM CẬP NHẬT TRẠNG THÁI MÓN TRONG ĐƠN (XONG HOẶC HẾT)
   const handleUpdateItem = async (orderId, itemId, status) => {
     try {
-      await fetch('http://localhost:5000/api/chef/update-item-status', {
+      await fetch(`${API_URL}/chef/update-item-status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId, itemId, status })
@@ -79,7 +81,7 @@ function Chef({ socket }) {
   // HÀM BÁO HẾT MÓN TRÊN TOÀN HỆ THỐNG
   const handleToggleMenu = async (menuItemId, currentStatus) => {
     try {
-      const res = await fetch('http://localhost:5000/api/chef/menu/toggle', {
+      const res = await fetch(`${API_URL}/chef/menu/toggle`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ menuItemId: menuItemId, isAvailable: !currentStatus })

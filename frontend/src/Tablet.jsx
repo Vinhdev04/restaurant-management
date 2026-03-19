@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 function Tablet({ socket }) {
   const [activeTableId, setActiveTableId] = useState(null); 
   const [menuItems, setMenuItems] = useState([]); 
@@ -17,7 +19,7 @@ function Tablet({ socket }) {
 
   const fetchMenu = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/menu/all');
+      const res = await fetch(`${API_URL}/admin/menu/all`);
       const data = await res.json();
       setMenuItems(data); 
     } catch (error) {}
@@ -30,7 +32,7 @@ function Tablet({ socket }) {
 
     const fetchOldOrders = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/customer/${activeTableId}`);
+        const res = await fetch(`${API_URL}/customer/${activeTableId}`);
         if (res.ok) setMyTrackingOrders(await res.json());
       } catch (error) {}
     };
@@ -77,7 +79,7 @@ function Tablet({ socket }) {
   const handleUnlock = async () => {
     if (!pinInput) return alert("Vui lòng nhập mã PIN!");
     try {
-      const res = await fetch('http://localhost:5000/api/customer/verify-pin', {
+      const res = await fetch(`${API_URL}/customer/verify-pin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pin: pinInput }) 
@@ -135,7 +137,7 @@ function Tablet({ socket }) {
     const validCart = cart.map(item => ({ ...item, quantity: parseInt(item.quantity) || 1 }));
     if (validCart.length === 0) return alert("Vui lòng chọn ít nhất 1 món ăn!");
     try {
-      const res = await fetch('http://localhost:5000/api/customer/order', {
+      const res = await fetch(`${API_URL}/customer/order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tableId: activeTableId, items: validCart }) 
@@ -152,7 +154,7 @@ function Tablet({ socket }) {
 
   const submitPaymentRequest = async (method) => {
     try {
-      const res = await fetch('http://localhost:5000/api/customer/request-payment', {
+      const res = await fetch(`${API_URL}/customer/request-payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tableId: activeTableId, paymentMethod: method })

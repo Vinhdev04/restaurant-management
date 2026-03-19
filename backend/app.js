@@ -28,10 +28,18 @@ app.use(cors());
 app.use(express.json()); // Giúp Backend đọc được cục data (Gà rán, 50k) mà Frontend gửi lên
 
 // 2. KẾT NỐI DATABASE
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Toan:123@cluster0.0hmrrgm.mongodb.net/NhaHang_DB?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+    console.error("❌ Lỗi: MONGODB_URI chưa được cấu hình trong file .env");
+    process.exit(1);
+}
+
 mongoose.connect(MONGODB_URI)
-    .then(() => console.log("✅ Kết nối MongoDB thành công!"))
-    .catch(err => console.error("❌ Lỗi kết nối MongoDB:", err));
+    .then(() => console.log("✅ Kết nối MongoDB Cloud thành công!"))
+    .catch(err => {
+        console.error("❌ Lỗi kết nối MongoDB:", err);
+        console.log("💡 Gợi ý: Kiểm tra lại MONGODB_URI trong file .env và quyền truy cập IP trên Atlas");
+    });
 
 // 3. MỞ CỬA CÁC API
 app.use('/api/admin', adminRoutes);

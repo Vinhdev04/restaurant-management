@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 function AdminMenu({ socket }) { // ĐÃ THÊM PROP SOCKET Ở ĐÂY
   const [activeTab, setActiveTab] = useState('menu');
 
@@ -49,32 +51,32 @@ function AdminMenu({ socket }) { // ĐÃ THÊM PROP SOCKET Ở ĐÂY
 
   const fetchMenu = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/menu/all');
+      const res = await fetch(`${API_URL}/admin/menu/all`);
       if(res.ok) setMenuItems(await res.json());
-    } catch (error) { console.log("Lỗi tải menu:", error); }
+    } catch (error) { console.error("Lỗi tải menu:", error); }
   };
 
   const fetchTables = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/manager/tables');
+      const res = await fetch(`${API_URL}/manager/tables`);
       if (res.ok) setTables(await res.json());
-    } catch (error) { console.log("Lỗi tải bàn:", error); }
+    } catch (error) { console.error("Lỗi tải bàn:", error); }
   };
 
   const fetchRevenue = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/revenue');
+      const res = await fetch(`${API_URL}/admin/revenue`);
       if (res.ok) {
         const data = await res.json();
         setRevenueData(data);
       }
-    } catch (error) { console.log("Lỗi tải doanh thu:", error); }
+    } catch (error) { console.error("Lỗi tải doanh thu:", error); }
   };
 
   const handleAddMenu = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/admin/menu/add', {
+      const res = await fetch(`${API_URL}/admin/menu/add`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData)
       });
       if (res.ok) {
@@ -87,7 +89,7 @@ function AdminMenu({ socket }) { // ĐÃ THÊM PROP SOCKET Ở ĐÂY
 
   const handleSaveEdit = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/menu/edit/${editingId}`, {
+      const res = await fetch(`${API_URL}/admin/menu/edit/${editingId}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editData)
       });
       if (res.ok) {
@@ -101,7 +103,7 @@ function AdminMenu({ socket }) { // ĐÃ THÊM PROP SOCKET Ở ĐÂY
   const handleDeleteMenu = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa món này không?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/menu/delete/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URL}/admin/menu/delete/${id}`, { method: 'DELETE' });
       if (res.ok) {
         alert("Đã xóa món!");
         fetchMenu();
@@ -112,7 +114,7 @@ function AdminMenu({ socket }) { // ĐÃ THÊM PROP SOCKET Ở ĐÂY
   const handleAddTable = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/admin/table/add', {
+      const res = await fetch(`${API_URL}/admin/table/add`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tableId: newTableId })
       });
       const data = await res.json();

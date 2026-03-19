@@ -4,19 +4,24 @@ const User = require('./models/User.model');
 const Menu = require('./models/Menu.model');
 const Table = require('./models/Table.model');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/NhaHang_DB';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const seedData = async () => {
+    if (!MONGODB_URI) {
+        console.error("❌ Lỗi: MONGODB_URI chưa được cấu hình trong file .env");
+        process.exit(1);
+    }
     try {
         await mongoose.connect(MONGODB_URI);
         console.log("✅ Kết nối MongoDB thành công để seed data!");
 
         // 1. Seed Users
         await User.deleteMany({});
+        const defaultPassword = process.env.DEFAULT_PASSWORD || '123';
         const users = [
-            { username: 'admin', password: '123', role: 'admin' },
-            { username: 'manager', password: '123', role: 'manager' },
-            { username: 'chef', password: '123', role: 'chef' }
+            { username: process.env.ADMIN_USER || 'admin', password: defaultPassword, role: 'admin' },
+            { username: process.env.MANAGER_USER || 'manager', password: defaultPassword, role: 'manager' },
+            { username: process.env.CHEF_USER || 'chef', password: defaultPassword, role: 'chef' }
         ];
         await User.insertMany(users);
         console.log("✅ Đã seed Users!");
