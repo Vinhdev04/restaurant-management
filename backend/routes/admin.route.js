@@ -12,5 +12,6 @@ router.put('/menu/edit/:id', adminController.updateMenuItem);
 router.delete('/menu/delete/:id', adminController.deleteMenuItem);
 
 router.get('/revenue', adminController.getRevenue);
+router.get('/stats', adminController.getGeneralStats);
 
 module.exports = router;
