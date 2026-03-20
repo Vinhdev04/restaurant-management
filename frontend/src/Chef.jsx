@@ -62,33 +62,35 @@ function Chef({ socket }) {
     fetchCompletedOrders();
     fetchMenu();
 
-    socket.on('NEW_ORDER_RECEIVED', (newOrder) => {
-      setPendingOrders((prev) => [newOrder, ...prev]);
-    });
+    if (socket) {
+      socket.on('NEW_ORDER_RECEIVED', (newOrder) => {
+        setPendingOrders((prev) => [newOrder, ...prev]);
+      });
 
-    // NHẬN STATUS MỚI TỪ SOCKET (Hoàn thành hoặc Hết món)
-    socket.on('ITEM_COMPLETED', ({ orderId, itemId, status }) => {
-      setPendingOrders((prev) => prev.map(order => {
-        if (order._id === orderId) {
-          const newItems = order.items.map(item => 
-            item._id === itemId ? { ...item, status: status } : item
-          );
-          return { ...order, items: newItems };
-        }
-        return order;
-      }));
-    });
+      // NHẬN STATUS MỚI TỪ SOCKET (Hoàn thành hoặc Hết món)
+      socket.on('ITEM_COMPLETED', ({ orderId, itemId, status }) => {
+        setPendingOrders((prev) => prev.map(order => {
+          if (order._id === orderId) {
+            const newItems = order.items.map(item => 
+              item._id === itemId ? { ...item, status: status } : item
+            );
+            return { ...order, items: newItems };
+          }
+          return order;
+        }));
+      });
 
-    socket.on('ORDER_COMPLETED', (completedOrder) => {
-      setPendingOrders(prev => prev.filter(order => order._id !== completedOrder._id));
-      setCompletedOrders(prev => [completedOrder, ...prev]);
-    });
+      socket.on('ORDER_COMPLETED', (completedOrder) => {
+        setPendingOrders(prev => prev.filter(order => order._id !== completedOrder._id));
+        setCompletedOrders(prev => [completedOrder, ...prev]);
+      });
 
-    return () => {
-      socket.off('NEW_ORDER_RECEIVED');
-      socket.off('ITEM_COMPLETED');
-      socket.off('ORDER_COMPLETED');
-    };
+      return () => {
+        socket.off('NEW_ORDER_RECEIVED');
+        socket.off('ITEM_COMPLETED');
+        socket.off('ORDER_COMPLETED');
+      };
+    }
   }, [socket]);
 
   // HÀM CẬP NHẬT TRẠNG THÁI MÓN TRONG ĐƠN (XONG HOẶC HẾT)
