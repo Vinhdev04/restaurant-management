@@ -39,6 +39,10 @@ const Header = () => {
 
  
 
+  const isTabletPage = window.location.pathname === '/tablet';
+
+  if (isTabletPage) return null;
+
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <div className={styles.headerContainer}>

@@ -19,6 +19,17 @@ const createReservation = async (req, res) => {
         });
 
         await newReservation.save();
+
+        // Gửi thông báo đặt bàn Real-time
+        const io = req.app.get('socketio');
+        if (io) {
+            io.emit('NOTIFICATION', {
+                type: 'NEW_RESERVATION',
+                message: `Khách hàng ${name} vừa đặt bàn cho ${guests} người vào lúc ${time} ngày ${date}!`,
+                time: new Date()
+            });
+        }
+
         res.status(201).json({ message: "Đã gửi yêu cầu đặt bàn thành công!", reservation: newReservation });
     } catch (error) {
         console.error("Lỗi khi tạo đặt bàn:", error);

@@ -69,7 +69,7 @@ const menuData = [
 const tableData = [
     { tableId: "01", status: "Trống" },
     { tableId: "02", status: "Trống" },
-    { tableId: "03", status: "Đang dùng", pin: "1234" },
+    { tableId: "03", status: "Đang dùng", pin: "123456" },
     { tableId: "04", status: "Trống" },
     { tableId: "05", status: "Chờ thanh toán", pin: "5678" },
     { tableId: "06", status: "Trống" },

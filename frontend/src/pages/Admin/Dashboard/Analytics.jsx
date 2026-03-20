@@ -1,5 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Analytics.module.scss';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement,
+} from 'chart.js';
+import { Bar, Doughnut, Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+);
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -7,11 +32,21 @@ const Analytics = () => {
   const [stats, setStats] = useState([
     { title: 'Doanh thu tổng', value: '$0', change: '0%', icon: '💵', color: 'success' },
     { title: 'Tổng đơn hàng', value: '0', change: '0%', icon: '🛍️', color: 'info' },
-    { title: 'Thực đơn', value: '0', change: '0%', icon: '🍽️', color: 'warning' },
-    { title: 'Đánh giá khách hàng', value: '4.8', change: '+0.2', icon: '⭐', color: 'error' },
+    { title: 'Thực đơn', value: '0', change: '0%', icon: '🍴', color: 'warning' },
+    { title: 'Nhân viên', value: '0', change: '0%', icon: '👥', color: 'error' },
   ]);
 
   const [currentUser, setCurrentUser] = useState(null);
+  const [chartData, setChartData] = useState(null);
+  const [pieData, setPieData] = useState(null);
+
+  const topItems = [
+    { rank: 1, name: 'Bò Lúc Lắc', orders: '342 đơn' },
+    { rank: 2, name: 'Cá Hồi Áp Chảo', orders: '298 đơn' },
+    { rank: 3, name: 'Súp Hải Sản', orders: '256 đơn' },
+    { rank: 4, name: 'Gà Quay Lu', orders: '412 đơn' },
+    { rank: 5, name: 'Chè Khúc Bạch', orders: '287 đơn' },
+  ];
 
   useEffect(() => {
     const savedUser = localStorage.getItem('restaurant_user');
@@ -28,6 +63,37 @@ const Analytics = () => {
             { title: 'Thực đơn', value: `${data.totalMenu} món`, change: '+5.3%', icon: '🍴', color: 'warning' },
             { title: 'Nhân viên', value: data.totalStaff || '0', change: '+2', icon: '👥', color: 'error' },
           ]);
+
+          // Cập nhật dữ liệu biểu đồ Bar
+          setChartData({
+            labels: data.revenueByMonth.map(item => item.month),
+            datasets: [
+              {
+                label: 'Doanh thu (triệu VNĐ)',
+                data: data.revenueByMonth.map(item => item.amount),
+                backgroundColor: 'rgba(20, 184, 166, 0.8)',
+                borderRadius: 8,
+              },
+            ],
+          });
+
+          // Cập nhật dữ liệu biểu đồ Pie (Doughnut)
+          setPieData({
+            labels: data.popularCategories.map(item => item.name),
+            datasets: [
+              {
+                data: data.popularCategories.map(item => item.value),
+                backgroundColor: [
+                  '#14b8a6',
+                  '#0d9488',
+                  '#0f766e',
+                  '#115e59',
+                  '#134e4a',
+                ],
+                borderWidth: 0,
+              },
+            ],
+          });
         }
       } catch (error) {
         console.error("Lỗi tải thống kê:", error);
@@ -53,7 +119,6 @@ const Analytics = () => {
       {/* Stats Cards */}
       <div className={styles.statsGrid}>
         {stats.map((stat, index) => (
-          // Ẩn doanh thu với Chef
           (currentUser.role !== 'chef' || stat.title !== 'Doanh thu tổng') && (
             <div key={index} className={styles.statCard}>
               <div className={styles.statHeader}>
@@ -67,39 +132,43 @@ const Analytics = () => {
         ))}
       </div>
 
-      {/* Phân chia nội dung Dashboard theo Role */}
       <div className={styles.chartsGrid}>
-        {currentUser.role === 'admin' ? (
-          <>
-            {/* Revenue Overview - Chỉ Admin */}
-            <div className={styles.chartCard}>
-              <h3 className={styles.cardTitle}>Tổng quan doanh thu hệ thống</h3>
-              <div className={styles.barChart}>
-                {['T1', 'T2', 'T3', 'T4', 'T5', 'T6'].map((month, index) => (
-                  <div key={month} className={styles.barRow}>
-                    <span className={styles.barLabel}>{month}</span>
-                    <div className={styles.barTrack}>
-                      <div className={styles.barFill} style={{ width: `${60 + index * 5}%` }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        ) : (
+        {currentUser.role === 'admin' && chartData && (
           <div className={styles.chartCard}>
-            <h3 className={styles.cardTitle}>Lịch làm việc & Ghi chú</h3>
-            <div className={styles.notesList}>
-              <div className={styles.noteItem}>🔔 Có 3 bàn mới đặt lúc 19:00 hôm nay.</div>
-              <div className={styles.noteItem}>🔔 Kiểm tra tồn kho nguyên liệu buổi sáng.</div>
+            <h3 className={styles.cardTitle}>Tăng trưởng doanh thu 2024</h3>
+            <div className={styles.chartWrapper}>
+              <Bar 
+                data={chartData} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: { y: { beginAtZero: true } }
+                }} 
+              />
             </div>
           </div>
         )}
 
-        {/* Top Performing Items - Admin & Manager */}
+        {pieData && (
+          <div className={styles.chartCard}>
+            <h3 className={styles.cardTitle}>Phân loại thực đơn</h3>
+            <div className={styles.chartWrapper} style={{ height: '250px' }}>
+              <Doughnut 
+                data={pieData} 
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { position: 'bottom' } }
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         {(currentUser.role === 'admin' || currentUser.role === 'manager') && (
           <div className={styles.chartCard}>
-            <h3 className={styles.cardTitle}>Món ăn bán chạy</h3>
+            <h3 className={styles.cardTitle}>Món ăn bán chạy nhất</h3>
             <div className={styles.topItemsList}>
               {topItems.map((item) => (
                 <div key={item.rank} className={styles.topItem}>
@@ -113,96 +182,6 @@ const Analytics = () => {
             </div>
           </div>
         )}
-      </div>
-    </div>
-  );
-};
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.bottomGrid}>
-        {/* Customer Satisfaction */}
-        <div className={styles.chartCard}>
-          <h3 className={styles.cardTitle}>Customer Satisfaction</h3>
-          <div className={styles.satisfactionContent}>
-            <div className={styles.donutChart}>
-              <div className={styles.donutCenter}>
-                <span className={styles.donutValue}>92%</span>
-                <span className={styles.donutLabel}>Satisfied</span>
-              </div>
-              <svg viewBox="0 0 36 36" className={styles.circularChart}>
-                <path className={styles.circleBg}
-                  d="M18 2.0845
-                    a 15.9155 15.9155 0 0 1 0 31.831
-                    a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path className={styles.circle}
-                  strokeDasharray="92, 100"
-                  d="M18 2.0845
-                    a 15.9155 15.9155 0 0 1 0 31.831
-                    a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-              </svg>
-            </div>
-            <div className={styles.ratingList}>
-              {[5, 4, 3, 2, 1].map((star) => (
-                <div key={star} className={styles.ratingRow}>
-                  <span className={styles.starLabel}>{star} Stars</span>
-                  <span className={styles.starValue}>{star === 5 ? '68%' : star === 4 ? '24%' : '1%'}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Peak Hours */}
-        <div className={styles.chartCard}>
-          <h3 className={styles.cardTitle}>Peak Hours</h3>
-          <div className={styles.peakHoursList}>
-            {[
-              { time: '12:00 PM - 1:00 PM', bookings: 28 },
-              { time: '1:00 PM - 2:00 PM', bookings: 32 },
-              { time: '6:00 PM - 7:00 PM', bookings: 38 },
-              { time: '7:00 PM - 8:00 PM', bookings: 45 },
-              { time: '8:00 PM - 9:00 PM', bookings: 42 },
-            ].map((slot, index) => (
-              <div key={index} className={styles.peakRow}>
-                <span className={styles.peakTime}>{slot.time}</span>
-                <div className={styles.peakBarContainer}>
-                  <div 
-                    className={styles.peakBar} 
-                    style={{ width: `${(slot.bookings / 50) * 100}%` }}
-                  ></div>
-                </div>
-                <span className={styles.peakValue}>{slot.bookings} bookings</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Table Turnover */}
-        <div className={styles.chartCard}>
-          <h3 className={styles.cardTitle}>Table Turnover</h3>
-          <div className={styles.turnoverList}>
-            {[
-              { table: 'Table 5', turns: '6 turns today', revenue: '$1,245' },
-              { table: 'Table 12', turns: '5 turns today', revenue: '$1,180' },
-              { table: 'Table 8', turns: '5 turns today', revenue: '$1,095' },
-              { table: 'Table 3', turns: '4 turns today', revenue: '$890' },
-              { table: 'Table 15', turns: '4 turns today', revenue: '$865' },
-            ].map((item, index) => (
-              <div key={index} className={styles.turnoverRow}>
-                <div className={styles.turnoverInfo}>
-                  <span className={styles.tableName}>{item.table}</span>
-                  <span className={styles.turnCount}>{item.turns}</span>
-                </div>
-                <span className={styles.turnRevenue}>{item.revenue}</span>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

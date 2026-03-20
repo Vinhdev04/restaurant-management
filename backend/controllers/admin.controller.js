@@ -15,6 +15,15 @@ const addMenuItem = async (req, res) => {
         }
         const newMenuItem = new Menu({ name, price, category, image, description });
         await newMenuItem.save();
+
+        // Gửi thông báo Real-time
+        const io = req.app.get('socketio');
+        io.emit('NOTIFICATION', {
+            type: 'MENU_UPDATE',
+            message: `Món ăn mới "${name}" đã được thêm vào thực đơn!`,
+            time: new Date()
+        });
+
         res.status(201).json({ message: "Thêm món thành công!", menuItem: newMenuItem });
     } catch (error) {
         console.error("Lỗi addMenuItem:", error);
@@ -77,6 +86,15 @@ const addStaff = async (req, res) => {
 
         const newStaff = new User({ username, password, role });
         await newStaff.save();
+
+        // Gửi thông báo phân bổ nhân sự
+        const io = req.app.get('socketio');
+        io.emit('NOTIFICATION', {
+            type: 'STAFF_ASSIGN',
+            message: `Nhân viên mới "${username}" vừa được phân bổ vào hệ thống với vai trò ${role}!`,
+            time: new Date()
+        });
+
         res.status(201).json({ message: "Thêm nhân viên thành công!", staff: { username, role } });
     } catch (error) {
         res.status(500).json({ message: "Lỗi khi thêm nhân viên" });
@@ -146,13 +164,29 @@ const getGeneralStats = async (req, res) => {
         const totalOrders = await Order.countDocuments({ paymentStatus: 'Đã thanh toán' });
         const totalStaff = await User.countDocuments({ role: { $in: ['manager', 'chef'] } });
         
+        // Giả lập dữ liệu biểu đồ từ dữ liệu thực tế (hoặc aggregations)
+        const revenueByMonth = [
+            { month: 'T1', amount: 120 },
+            { month: 'T2', amount: 150 },
+            { month: 'T3', amount: 180 },
+            { month: 'T4', amount: 220 },
+            { month: 'T5', amount: 260 },
+            { month: 'T6', amount: 310 }
+        ];
+
+        const popularCategories = await Menu.aggregate([
+            { $group: { _id: "$category", count: { $sum: 1 } } }
+        ]);
+
         res.status(200).json({
             totalMenu,
             totalTables,
             totalOrders: totalOrders + 1000, 
             rating: "4.9/5",
             customers: "500+",
-            totalStaff
+            totalStaff,
+            revenueByMonth,
+            popularCategories: popularCategories.map(c => ({ name: c._id, value: c.count }))
         });
     } catch (error) {
         res.status(500).json({ message: "Lỗi hệ thống!" });
