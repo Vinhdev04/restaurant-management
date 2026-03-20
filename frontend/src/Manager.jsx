@@ -43,15 +43,17 @@ function Manager({ socket }) {
     fetchTables();
     fetchPending();
 
-    socket.on('PAYMENT_REQUESTED', () => fetchPending());
-    socket.on('NEW_ORDER_RECEIVED', () => fetchTables()); 
-    socket.on('PAYMENT_CONFIRMED', () => { fetchPending(); fetchTables(); });
+    if (socket) {
+      socket.on('PAYMENT_REQUESTED', () => fetchPending());
+      socket.on('NEW_ORDER_RECEIVED', () => fetchTables()); 
+      socket.on('PAYMENT_CONFIRMED', () => { fetchPending(); fetchTables(); });
 
-    return () => {
-      socket.off('PAYMENT_REQUESTED');
-      socket.off('NEW_ORDER_RECEIVED');
-      socket.off('PAYMENT_CONFIRMED');
-    };
+      return () => {
+        socket.off('PAYMENT_REQUESTED');
+        socket.off('NEW_ORDER_RECEIVED');
+        socket.off('PAYMENT_CONFIRMED');
+      };
+    }
   }, [socket]);
 
   const handleOpenTable = async (tableId) => {

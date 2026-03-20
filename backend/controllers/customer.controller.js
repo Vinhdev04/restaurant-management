@@ -5,8 +5,9 @@ const Order = require('../models/Order.model');
 const verifyPin = async (req, res) => {
     try {
         const { pin } = req.body;
-        const table = await Table.findOne({ pin });
-        if (!table) return res.status(401).json({ message: "Mã PIN không đúng!" });
+        // Chỉ cho phép verify những bàn đang có trạng thái 'Đang dùng' hoặc 'Chờ thanh toán'
+        const table = await Table.findOne({ pin, status: { $in: ['Đang dùng', 'Chờ thanh toán'] } });
+        if (!table) return res.status(401).json({ message: "Mã PIN không đúng hoặc bàn chưa được nhân viên mở!" });
         res.status(200).json({ message: "Mở bàn thành công!", tableId: table.tableId });
     } catch (error) {
         res.status(500).json({ message: "Lỗi hệ thống!" });

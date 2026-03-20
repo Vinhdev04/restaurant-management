@@ -17,6 +17,7 @@ import Tablet from '@/Tablet.jsx';
 import Analytics from '@/pages/Admin/Dashboard/Analytics.jsx';
 import MenuManagement from '@/pages/Admin/Dashboard/MenuManagement.jsx';
 import Reservations from '@/pages/Admin/Dashboard/Reservations.jsx';
+import StaffManagement from '@/pages/Admin/Dashboard/StaffManagement.jsx';
 import Settings from '@/pages/Admin/Dashboard/Settings.jsx';
 
 // Staff Pages
@@ -48,7 +49,7 @@ const routes = [
             { path: 'menu', element: <MenuManagement /> },
             { path: 'reservations', element: <Reservations /> },
             { path: 'settings', element: <Settings /> },
-            { path: 'staff', element: <div style={{ padding: '20px' }}>Staff Management</div> },
+            { path: 'staff', element: <StaffManagement /> },
         ]
     },
 

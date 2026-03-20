@@ -86,19 +86,18 @@ const Reservations = () => {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '50px' }}>Đang tải dữ liệu...</div>
+        <div className={styles.loadingState}>Đang tải dữ liệu...</div>
       ) : (
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>Khách hàng</th>
-                <th>Ngày</th>
-                <th>Giờ</th>
+                <th>Liên hệ</th>
+                <th>Ngày & Giờ</th>
                 <th>Số khách</th>
-                <th>Ghi chú</th>
                 <th>Trạng thái</th>
-                <th>Hành động</th>
+                <th>Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -107,13 +106,22 @@ const Reservations = () => {
                   <td>
                     <div className={styles.guestInfo}>
                       <span className={styles.guestName}>{res.guestName}</span>
-                      <span className={styles.guestPhone}>{res.phone}</span>
+                      <span className={styles.notes}>{res.notes}</span>
                     </div>
                   </td>
-                  <td>{res.date}</td>
-                  <td>{res.time}</td>
-                  <td>{res.guests}</td>
-                  <td>{res.notes || '-'}</td>
+                  <td>
+                    <div className={styles.contactInfo}>
+                      <span>📞 {res.phone}</span>
+                      <span>📧 {res.email}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.dateTime}>
+                      <span className={styles.date}>{res.date}</span>
+                      <span className={styles.time}>{res.time}</span>
+                    </div>
+                  </td>
+                  <td><span className={styles.guestCount}>{res.guests} người</span></td>
                   <td>
                     <span className={`${styles.statusBadge} ${styles[res.status.toLowerCase()]}`}>
                       {res.status === 'Pending' ? 'Đang chờ' :
@@ -124,19 +132,33 @@ const Reservations = () => {
                   <td>
                     <div className={styles.actions}>
                       {res.status === 'Pending' && (
-                        <button className={styles.actionBtn} onClick={() => handleUpdateStatus(res._id, 'Confirmed')} title="Xác nhận">✅</button>
+                        <button 
+                          className={styles.confirmBtn} 
+                          onClick={() => handleUpdateStatus(res._id, 'Confirmed')}
+                        >
+                          Xác nhận
+                        </button>
                       )}
                       {res.status === 'Confirmed' && (
-                        <button className={styles.actionBtn} onClick={() => handleUpdateStatus(res._id, 'Completed')} title="Hoàn thành">🏁</button>
+                        <button 
+                          className={styles.completeBtn} 
+                          onClick={() => handleUpdateStatus(res._id, 'Completed')}
+                        >
+                          Hoàn thành
+                        </button>
                       )}
-                      <button className={styles.actionBtn} onClick={() => handleDelete(res._id)} title="Xóa">🗑️</button>
+                      <button className={styles.deleteBtn} onClick={() => handleDelete(res._id)}>🗑️</button>
                     </div>
                   </td>
                 </tr>
               ))}
+              {filteredReservations.length === 0 && (
+                <tr>
+                  <td colSpan="6" className={styles.emptyRow}>Không tìm thấy yêu cầu đặt bàn nào.</td>
+                </tr>
+              )}
             </tbody>
           </table>
-          {filteredReservations.length === 0 && <p style={{ textAlign: 'center', padding: '20px' }}>Không có dữ liệu.</p>}
         </div>
       )}
     </div>

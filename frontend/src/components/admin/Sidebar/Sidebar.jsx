@@ -10,14 +10,37 @@ const Sidebar = () => {
     if (savedUser) setCurrentUser(JSON.parse(savedUser));
   }, []);
 
-  const menuItems = [
-    { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
-    { name: 'Đặt bàn', path: '/admin/reservations', icon: '📅' },
-    { name: 'Thực đơn', path: '/admin/menu', icon: '🍴' },
-    { name: 'Nhân viên', path: '/admin/staff', icon: '👥' },
-    { name: 'Phân tích', path: '/admin/analytics', icon: '📈' },
-    { name: 'Cài đặt', path: '/admin/settings', icon: '⚙️' },
-  ];
+  const menuItems = React.useMemo(() => {
+    if (!currentUser) return [];
+
+    const items = [];
+    
+    // Mọi role (Admin, Manager, Chef) đều có Dashboard/Analytics cơ bản
+    items.push({ name: 'Dashboard', path: '/admin/dashboard', icon: '📊' });
+
+    // Phân quyền theo Role
+    if (currentUser.role === 'admin' || currentUser.role === 'manager') {
+      items.push({ name: 'Đặt bàn', path: '/admin/reservations', icon: '📅' });
+      items.push({ name: 'Thực đơn', path: '/admin/menu', icon: '🍴' });
+    }
+
+    if (currentUser.role === 'admin') {
+      items.push({ name: 'Nhân viên', path: '/admin/staff', icon: '👥' });
+      items.push({ name: 'Phân tích', path: '/admin/analytics', icon: '📈' });
+    }
+
+    if (currentUser.role === 'chef') {
+      items.push({ name: 'Bếp (Chef)', path: '/staff/chef', icon: '👨‍🍳' });
+    }
+
+    if (currentUser.role === 'manager') {
+      items.push({ name: 'Quản lý bàn', path: '/staff/manager', icon: '📋' });
+    }
+
+    items.push({ name: 'Cài đặt', path: '/admin/settings', icon: '⚙️' });
+    
+    return items;
+  }, [currentUser]);
 
   return (
     <aside className={styles.sidebar}>

@@ -11,7 +11,12 @@ const Analytics = () => {
     { title: 'Đánh giá khách hàng', value: '4.8', change: '+0.2', icon: '⭐', color: 'error' },
   ]);
 
+  const [currentUser, setCurrentUser] = useState(null);
+
   useEffect(() => {
+    const savedUser = localStorage.getItem('restaurant_user');
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+
     const fetchStats = async () => {
       try {
         const res = await fetch(`${API_URL}/admin/stats`);
@@ -20,8 +25,8 @@ const Analytics = () => {
           setStats([
             { title: 'Doanh thu tổng', value: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalOrders * 150000)}`, change: '+18.2%', icon: '💵', color: 'success' },
             { title: 'Tổng đơn hàng', value: `${data.totalOrders}`, change: '+12.5%', icon: '🛍️', color: 'info' },
-            { title: 'Thực đơn', value: `${data.totalMenu} món`, change: '+5.3%', icon: '🍽️', color: 'warning' },
-            { title: 'Khách hàng', value: data.customers, change: '+0.2', icon: '👥', color: 'error' },
+            { title: 'Thực đơn', value: `${data.totalMenu} món`, change: '+5.3%', icon: '🍴', color: 'warning' },
+            { title: 'Nhân viên', value: data.totalStaff || '0', change: '+2', icon: '👥', color: 'error' },
           ]);
         }
       } catch (error) {
@@ -31,73 +36,87 @@ const Analytics = () => {
     fetchStats();
   }, []);
 
-  const topItems = [
-    { rank: 1, name: 'Bò Lúc Lắc', orders: '342 đơn', price: '250.000đ', change: '+15%' },
-    { rank: 2, name: 'Cá Hồi Áp Chảo', orders: '298 đơn', price: '320.000đ', change: '+22%' },
-    { rank: 3, name: 'Súp Hải Sản', orders: '256 đơn', price: '85.000đ', change: '+18%' },
-    { rank: 4, name: 'Gà Quay Lu', orders: '412 đơn', price: '280.000đ', change: '-8%' },
-    { rank: 5, name: 'Chè Khúc Bạch', orders: '287 đơn', price: '45.000đ', change: '+12%' },
-  ];
+  if (!currentUser) return <div className={styles.loading}>Đang tải...</div>;
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Phân tích & Thống kê</h1>
-        <p className={styles.subtitle}>Theo dõi hiệu quả kinh doanh và thông tin chi tiết về nhà hàng của bạn</p>
+        <h1 className={styles.title}>
+          {currentUser.role === 'admin' ? 'Bảng điều khiển Admin' : 
+           currentUser.role === 'manager' ? 'Bảng điều khiển Quản lý' : 'Báo cáo công việc'}
+        </h1>
+        <p className={styles.subtitle}>
+          Chào mừng, {currentUser.username}! {currentUser.role === 'admin' ? 'Dưới đây là tổng quan toàn bộ hệ thống.' : 'Xem thống kê công việc hôm nay.'}
+        </p>
       </div>
 
       {/* Stats Cards */}
       <div className={styles.statsGrid}>
         {stats.map((stat, index) => (
-          <div key={index} className={styles.statCard}>
-            <div className={styles.statHeader}>
-              <div className={`${styles.iconBox} ${styles[stat.color]}`}>{stat.icon}</div>
-              <span className={styles.change}>{stat.change}</span>
+          // Ẩn doanh thu với Chef
+          (currentUser.role !== 'chef' || stat.title !== 'Doanh thu tổng') && (
+            <div key={index} className={styles.statCard}>
+              <div className={styles.statHeader}>
+                <div className={`${styles.iconBox} ${styles[stat.color]}`}>{stat.icon}</div>
+                <span className={styles.change}>{stat.change}</span>
+              </div>
+              <div className={styles.statValue}>{stat.value}</div>
+              <div className={styles.statTitle}>{stat.title}</div>
             </div>
-            <div className={styles.statValue}>{stat.value}</div>
-            <div className={styles.statTitle}>{stat.title}</div>
-          </div>
+          )
         ))}
       </div>
 
+      {/* Phân chia nội dung Dashboard theo Role */}
       <div className={styles.chartsGrid}>
-        {/* Revenue Overview */}
-        <div className={styles.chartCard}>
-          <h3 className={styles.cardTitle}>Tổng quan doanh thu</h3>
-          <div className={styles.barChart}>
-            {['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'].map((month, index) => (
-              <div key={month} className={styles.barRow}>
-                <span className={styles.barLabel}>{month}</span>
-                <div className={styles.barTrack}>
-                  <div 
-                    className={styles.barFill} 
-                    style={{ width: `${Math.random() * 40 + 60}%` }}
-                  ></div>
-                </div>
-                <span className={styles.barValue}>{ (Math.random() * 50 + 100).toFixed(0) }tr</span>
+        {currentUser.role === 'admin' ? (
+          <>
+            {/* Revenue Overview - Chỉ Admin */}
+            <div className={styles.chartCard}>
+              <h3 className={styles.cardTitle}>Tổng quan doanh thu hệ thống</h3>
+              <div className={styles.barChart}>
+                {['T1', 'T2', 'T3', 'T4', 'T5', 'T6'].map((month, index) => (
+                  <div key={month} className={styles.barRow}>
+                    <span className={styles.barLabel}>{month}</span>
+                    <div className={styles.barTrack}>
+                      <div className={styles.barFill} style={{ width: `${60 + index * 5}%` }}></div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+          </>
+        ) : (
+          <div className={styles.chartCard}>
+            <h3 className={styles.cardTitle}>Lịch làm việc & Ghi chú</h3>
+            <div className={styles.notesList}>
+              <div className={styles.noteItem}>🔔 Có 3 bàn mới đặt lúc 19:00 hôm nay.</div>
+              <div className={styles.noteItem}>🔔 Kiểm tra tồn kho nguyên liệu buổi sáng.</div>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Top Performing Items */}
-        <div className={styles.chartCard}>
-          <h3 className={styles.cardTitle}>Món ăn bán chạy</h3>
-          <div className={styles.topItemsList}>
-            {topItems.map((item) => (
-              <div key={item.rank} className={styles.topItem}>
-                <div className={styles.rankBox}>{item.rank}</div>
-                <div className={styles.itemInfo}>
-                  <span className={styles.itemName}>{item.name}</span>
-                  <span className={styles.itemOrders}>{item.orders}</span>
+        {/* Top Performing Items - Admin & Manager */}
+        {(currentUser.role === 'admin' || currentUser.role === 'manager') && (
+          <div className={styles.chartCard}>
+            <h3 className={styles.cardTitle}>Món ăn bán chạy</h3>
+            <div className={styles.topItemsList}>
+              {topItems.map((item) => (
+                <div key={item.rank} className={styles.topItem}>
+                  <div className={styles.rankBox}>{item.rank}</div>
+                  <div className={styles.itemInfo}>
+                    <span className={styles.itemName}>{item.name}</span>
+                    <span className={styles.itemOrders}>{item.orders}</span>
+                  </div>
                 </div>
-                <div className={styles.itemStats}>
-                  <span className={styles.itemPrice}>{item.price}</span>
-                  <span className={`${styles.itemChange} ${item.change.startsWith('+') ? styles.positive : styles.negative}`}>
-                    {item.change}
-                  </span>
-                </div>
-              </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
             ))}
           </div>
         </div>

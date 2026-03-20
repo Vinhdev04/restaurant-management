@@ -7,6 +7,16 @@ const MenuManagement = () => {
   const [activeTab, setActiveTab] = useState('All Items');
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    price: '',
+    category: 'Món chính',
+    image: '',
+    description: '',
+    isSoldOut: false
+  });
 
   const tabs = ['All Items', 'Khai vị', 'Món chính', 'Tráng miệng', 'Đồ uống'];
 
@@ -29,9 +39,56 @@ const MenuManagement = () => {
     }
   };
 
-  const filteredItems = activeTab === 'All Items' 
-    ? menuItems 
-    : menuItems.filter(item => item.category === activeTab);
+  const handleOpenModal = (item = null) => {
+    if (item) {
+      setEditingItem(item);
+      setFormData({
+        name: item.name,
+        price: item.price,
+        category: item.category,
+        image: item.image || '',
+        description: item.description || '',
+        isSoldOut: item.isSoldOut || false
+      });
+    } else {
+      setEditingItem(null);
+      setFormData({
+        name: '',
+        price: '',
+        category: 'Món chính',
+        image: '',
+        description: '',
+        isSoldOut: false
+      });
+    }
+    setShowModal(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const url = editingItem 
+      ? `${API_URL}/admin/menu/edit/${editingItem._id}` 
+      : `${API_URL}/admin/menu/add`;
+    const method = editingItem ? 'PUT' : 'POST';
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (res.ok) {
+        setShowModal(false);
+        fetchMenuItems();
+      } else {
+        const err = await res.json();
+        alert(err.message || "Lỗi khi lưu món ăn!");
+      }
+    } catch (error) {
+      alert("Lỗi kết nối tới máy chủ!");
+    }
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa món này?")) return;
@@ -45,6 +102,10 @@ const MenuManagement = () => {
     }
   };
 
+  const filteredItems = activeTab === 'All Items' 
+    ? menuItems 
+    : menuItems.filter(item => item.category === activeTab);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -52,7 +113,7 @@ const MenuManagement = () => {
           <h1 className={styles.title}>Quản Lý Thực Đơn</h1>
           <p className={styles.subtitle}>Quản lý các món ăn trong nhà hàng của bạn</p>
         </div>
-        <button className={styles.addButton}>+ Thêm món mới</button>
+        <button className={styles.addButton} onClick={() => handleOpenModal()}>+ Thêm món mới</button>
       </div>
 
       <div className={styles.tabs}>
@@ -68,7 +129,7 @@ const MenuManagement = () => {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '50px' }}>Đang tải dữ liệu...</div>
+        <div className={styles.loadingState}>Đang tải dữ liệu...</div>
       ) : (
         <div className={styles.grid}>
           {filteredItems.map((item) => (
@@ -86,12 +147,81 @@ const MenuManagement = () => {
                 </div>
                 <p className={styles.itemDescription}>{item.description || 'Không có mô tả.'}</p>
                 <div className={styles.cardActions}>
-                  <button className={styles.editBtn}>✏️ Sửa</button>
+                  <button className={styles.editBtn} onClick={() => handleOpenModal(item)}>✏️ Sửa</button>
                   <button className={styles.deleteBtn} onClick={() => handleDelete(item._id)}>🗑️ Xóa</button>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {showModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h2>{editingItem ? 'Sửa món ăn' : 'Thêm món ăn mới'}</h2>
+            <form onSubmit={handleSubmit}>
+              <div className={styles.formGroup}>
+                <label>Tên món</label>
+                <input 
+                  type="text" 
+                  value={formData.name} 
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Giá (VNĐ)</label>
+                <input 
+                  type="number" 
+                  value={formData.price} 
+                  onChange={(e) => setFormData({...formData, price: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Danh mục</label>
+                <select 
+                  value={formData.category} 
+                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                >
+                  <option value="Khai vị">Khai vị</option>
+                  <option value="Món chính">Món chính</option>
+                  <option value="Tráng miệng">Tráng miệng</option>
+                  <option value="Đồ uống">Đồ uống</option>
+                </select>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Link ảnh</label>
+                <input 
+                  type="text" 
+                  value={formData.image} 
+                  onChange={(e) => setFormData({...formData, image: e.target.value})}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Mô tả</label>
+                <textarea 
+                  value={formData.description} 
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                />
+              </div>
+              <div className={styles.checkboxGroup}>
+                <label>
+                  <input 
+                    type="checkbox" 
+                    checked={formData.isSoldOut} 
+                    onChange={(e) => setFormData({...formData, isSoldOut: e.target.checked})}
+                  />
+                  Hết hàng
+                </label>
+              </div>
+              <div className={styles.modalActions}>
+                <button type="button" onClick={() => setShowModal(false)} className={styles.cancelBtn}>Hủy</button>
+                <button type="submit" className={styles.submitBtn}>Lưu lại</button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

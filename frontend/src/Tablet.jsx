@@ -48,9 +48,11 @@ function Tablet({ socket }) {
       const data = await res.json();
       if (res.ok) {
         setActiveTableId(data.tableId);
+        // Lưu vào localStorage để không bị mất khi reload
+        localStorage.setItem('active_table_id', data.tableId);
         fetchOldOrders(data.tableId);
       } else {
-        alert(data.message || "Mã PIN không chính xác!");
+        alert(data.message || "Mã PIN không chính xác hoặc bàn chưa được mở!");
       }
     } catch (error) {
       alert("Lỗi kết nối máy chủ!");
@@ -58,6 +60,14 @@ function Tablet({ socket }) {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const savedTableId = localStorage.getItem('active_table_id');
+    if (savedTableId) {
+      setActiveTableId(savedTableId);
+      fetchOldOrders(savedTableId);
+    }
+  }, []);
 
   const fetchOldOrders = async (tableId) => {
     try {
