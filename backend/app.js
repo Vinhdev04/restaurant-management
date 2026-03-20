@@ -57,10 +57,19 @@ const connectDB = async () => {
             serverSelectionTimeoutMS: 5000,
             socketTimeoutMS: 45000,
         });
-        console.log(`✅ Kết nối MongoDB thành công!`);
+        console.log(`✅ Kết nối MongoDB Atlas thành công!`);
     } catch (err) {
-        console.error(`❌ Lỗi kết nối MongoDB:`, err.message);
-        mongoose.set('bufferCommands', false);
+        console.error(`❌ Lỗi kết nối MongoDB Atlas:`, err.message);
+        console.log(`⚠️ Đang thử kết nối tới MongoDB Local dự phòng...`);
+        try {
+            await mongoose.connect('mongodb://127.0.0.1:27017/NhaHang_DB', {
+                serverSelectionTimeoutMS: 2000
+            });
+            console.log(`✅ Kết nối MongoDB Local thành công!`);
+        } catch (localErr) {
+            console.error(`❌ Lỗi kết nối MongoDB Local:`, localErr.message);
+            mongoose.set('bufferCommands', false);
+        }
     }
 };
 

@@ -22,10 +22,12 @@ const Sidebar = () => {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logoContainer}>
-        <div className={styles.logoIcon}>🍴</div>
+        <div className={styles.logoIcon}>
+          <span>RMS</span>
+        </div>
         <div className={styles.logoText}>
-          <span className={styles.title}>RestaurantHub</span>
-          <span className={styles.subtitle}>Management System</span>
+          <span className={styles.title}>RMS HUB</span>
+          <span className={styles.subtitle}>Quản lý nhà hàng</span>
         </div>
       </div>
 
@@ -50,11 +52,7 @@ const Sidebar = () => {
       {currentUser && (
         <div className={styles.userProfile}>
           <div className={styles.avatar}>
-            <img 
-              src={`https://ui-avatars.com/api/?name=${currentUser.username}&background=D4734A&color=fff`} 
-              alt="Avatar" 
-              style={{ width: '100%', height: '100%', borderRadius: '50%' }}
-            />
+            {currentUser.username.charAt(0).toUpperCase()}
           </div>
           <div className={styles.userInfo}>
             <span className={styles.userName}>{currentUser.username}</span>

@@ -23,15 +23,22 @@ const TopBar = ({ title }) => {
         <span className={styles.searchIcon}>🔍</span>
         <input 
           type="text" 
-          placeholder="Tìm kiếm..." 
+          placeholder="Tìm kiếm mọi thứ..." 
           className={styles.searchInput}
         />
       </div>
 
       <div className={styles.actions}>
-        <button className={styles.notificationBtn} onClick={() => navigate('/')} title="Về trang chủ">
+        <button className={styles.iconBtn} onClick={() => navigate('/')} title="Về trang chủ">
           🏠
         </button>
+        
+        <button className={styles.iconBtn} title="Thông báo">
+          🔔
+          <span className={styles.badge}>3</span>
+        </button>
+
+        <div className={styles.divider}></div>
         
         {currentUser && (
           <div className={styles.userMenu} onClick={() => setShowDropdown(!showDropdown)}>

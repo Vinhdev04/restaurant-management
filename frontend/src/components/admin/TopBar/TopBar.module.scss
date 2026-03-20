@@ -1,9 +1,10 @@
-@use '@assets/styles/css/variable.module.scss' as *;
+@use '../../../assets/styles/css/variable.module.scss' as *;
 
 .topBar {
   height: 70px;
-  background-color: white;
-  border-bottom: 1px solid $admin-border;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -15,31 +16,37 @@
 
 .searchContainer {
   position: relative;
-  width: 300px;
+  width: 320px;
 
   .searchIcon {
     position: absolute;
-    left: 12px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: $text-muted;
-    font-size: 14px;
+    color: #94a3b8;
+    font-size: 16px;
   }
 
   .searchInput {
     width: 100%;
-    padding: 10px 12px 10px 36px;
-    border: 1px solid $admin-border;
-    border-radius: 8px;
-    background-color: #f9fafb;
+    padding: 10px 16px 10px 42px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background-color: #f8fafc;
     font-size: 14px;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #1e293b;
 
     &:focus {
       outline: none;
-      border-color: $admin-primary;
+      border-color: #14b8a6;
       background-color: white;
-      box-shadow: 0 0 0 3px rgba($admin-primary, 0.1);
+      box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+      width: 360px;
+    }
+
+    &::placeholder {
+      color: #94a3b8;
     }
   }
 }
@@ -47,41 +54,55 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
 }
 
-.notificationBtn {
+.iconBtn {
   position: relative;
-  background: none;
-  border: none;
-  font-size: 20px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  font-size: 18px;
   cursor: pointer;
-  color: $text-secondary;
-  padding: 8px;
-  border-radius: 50%;
-  transition: background 0.2s;
+  color: #64748b;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: $admin-bg;
-    color: $admin-primary;
+    background-color: #f1f5f9;
+    color: #14b8a6;
+    border-color: #14b8a6;
+    transform: translateY(-2px);
   }
 
   .badge {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    background-color: $status-error;
+    top: -5px;
+    right: -5px;
+    background-color: #ef4444;
     color: white;
     font-size: 10px;
     font-weight: 700;
-    min-width: 16px;
-    height: 16px;
+    min-width: 18px;
+    height: 18px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
   }
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e2e8f0;
+  margin: 0 8px;
 }
 
 .userMenu {
@@ -90,11 +111,13 @@
   gap: 12px;
   cursor: pointer;
   padding: 6px 12px;
-  border-radius: 8px;
-  transition: background 0.2s;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 
   &:hover {
-    background-color: $admin-bg;
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
   }
 
   .avatar {

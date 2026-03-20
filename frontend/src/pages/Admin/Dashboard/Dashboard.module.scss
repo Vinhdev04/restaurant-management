@@ -1,70 +1,88 @@
 @import "@assets/styles/css/variable.module.scss";
 
 .dashboardOverview {
-  padding: $spacing-md;
-  background-color: $bg-secondary;
-  min-height: 100vh;
+  padding: 8px;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .overviewHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-xl;
+  margin-bottom: 32px;
 
   h2 {
-    font-family: $font-heading;
-    color: $primary-terracotta;
-    font-size: $fs-2xl;
-  }
-
-  .datePicker input {
-    padding: $spacing-xs $spacing-sm;
-    border: 1px solid $border-medium;
-    border-radius: $radius-md;
-    font-family: $font-body;
+    font-size: 28px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+    letter-spacing: -0.5px;
   }
 }
 
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: $spacing-lg;
-  margin-bottom: $spacing-xl;
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .statCard {
-  background-color: $bg-primary;
-  padding: $spacing-lg;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
-  display: flex;
+  background-color: white;
+  padding: 24px;
+  border-radius: 20px;
+  display: flex; 
   align-items: center;
-  gap: $spacing-md;
-  transition: $transition-normal;
+  gap: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.03);
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: $shadow-md;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #14b8a6;
   }
 
   .statIcon {
-    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    background-color: #f8fafc;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .statIcon {
+    transform: scale(1.1) rotate(5deg);
   }
 
   .statInfo {
     h3 {
-      font-size: $fs-sm;
-      color: $text-secondary;
-      margin-bottom: $spacing-xs;
+      font-size: 14px;
+      color: #64748b;
+      margin: 0 0 4px 0;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     p {
-      font-size: $fs-xl;
-      font-weight: 700;
-      color: $text-primary;
+      font-size: 24px;
+      font-weight: 800;
+      color: #1e293b;
+      margin: 0;
     }
   }
 }
@@ -72,21 +90,28 @@
 .dashboardContent {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: $spacing-xl;
+  gap: 24px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .recentOrders, .popularItems {
-  background-color: $bg-primary;
-  padding: $spacing-lg;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
+  background-color: white;
+  padding: 28px;
+  border-radius: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
 
   h3 {
-    font-family: $font-heading;
-    font-size: $fs-lg;
-    margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-sm;
-    border-bottom: 1px solid $border-light;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 24px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }
 
@@ -97,75 +122,114 @@
     width: 100%;
     border-collapse: collapse;
 
-    th, td {
-      padding: $spacing-md;
-      text-align: left;
-      border-bottom: 1px solid $border-light;
-    }
-
     th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 13px;
       font-weight: 600;
-      color: $text-secondary;
-      font-size: $fs-sm;
+      color: #64748b;
+      background-color: #f8fafc;
+      border-bottom: 1px solid #f1f5f9;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
+
+      &:first-child { border-radius: 8px 0 0 8px; }
+      &:last-child { border-radius: 0 8px 8px 0; }
     }
 
     td {
-      font-size: $fs-sm;
+      padding: 16px;
+      font-size: 14px;
+      color: #334155;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: #f8fafc;
     }
   }
 }
 
 .statusDone {
-  color: #2e7d32;
-  background-color: #e8f5e9;
+  background-color: #dcfce7;
+  color: #166534;
   padding: 4px 12px;
-  border-radius: $radius-full;
-  font-weight: 500;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .statusPending {
-  color: #ed6c02;
-  background-color: #fff3e0;
+  background-color: #fef9c3;
+  color: #854d0e;
   padding: 4px 12px;
-  border-radius: $radius-full;
-  font-weight: 500;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .statusServing {
-  color: #0288d1;
-  background-color: #e1f5fe;
+  background-color: #e0f2fe;
+  color: #075985;
   padding: 4px 12px;
-  border-radius: $radius-full;
-  font-weight: 500;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .itemList {
   list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 
   li {
     display: flex;
-    justify-content: space-between;
-    padding: $spacing-md 0;
-    border-bottom: 1px solid $border-light;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
 
     &:last-child {
       border-bottom: none;
+      padding-bottom: 0;
     }
 
-    span:first-child {
-      font-weight: 500;
+    .itemImage {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+      background-color: #f1f5f9;
     }
 
-    span:last-child {
-      color: $primary-terracotta;
-      font-weight: 600;
-    }
-  }
-}
+    .itemInfo {
+      flex: 1;
 
-@media (max-width: $breakpoint-lg) {
-  .dashboardContent {
-    grid-template-columns: 1fr;
+      h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0 0 2px 0;
+      }
+
+      p {
+        font-size: 12px;
+        color: #64748b;
+        margin: 0;
+      }
+    }
+
+    .itemSales {
+      font-size: 14px;
+      font-weight: 700;
+      color: #14b8a6;
+    }
   }
 }

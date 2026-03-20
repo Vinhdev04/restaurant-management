@@ -45,21 +45,25 @@ const LoginPage = () => {
           <div className={styles.logo}>
             <span className={styles.logoIcon}>🍴</span>
           </div>
-          <h2>ĐĂNG NHẬP HỆ THỐNG</h2>
-          <p>Chọn vai trò và nhập thông tin tài khoản của bạn</p>
+          <h2>RMS SYSTEM</h2>
+          <p>Chào mừng quay trở lại! Vui lòng đăng nhập để tiếp tục</p>
         </div>
 
         <form className={styles.authForm} onSubmit={handleSignIn}>
-          {error && <div style={{ color: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.1)', padding: '10px', borderRadius: '5px', marginBottom: '15px', textAlign: 'center', fontSize: '14px' }}>{error}</div>}
+          {error && (
+            <div className={styles.errorAlert}>
+              <span className={styles.errorIcon}>⚠️</span>
+              {error}
+            </div>
+          )}
           
           <div className={styles.formGroup}>
-            <label htmlFor="role">Vai trò của bạn</label>
+            <label htmlFor="role">Vị trí công tác</label>
             <select 
               id="role" 
               value={role} 
               onChange={(e) => setRole(e.target.value)}
               className={styles.roleSelect}
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '16px', backgroundColor: '#f9f9f9' }}
             >
               <option value="admin">Quản trị viên (Admin)</option>
               <option value="manager">Quản lý (Manager)</option>
@@ -92,11 +96,15 @@ const LoginPage = () => {
           </div>
 
           <button type="submit" className={styles.submitBtn} disabled={isLoading}>
-            {isLoading ? 'Đang xử lý...' : 'ĐĂNG NHẬP'}
+            {isLoading ? (
+              <span className={styles.loader}>Đang xác thực...</span>
+            ) : (
+              'ĐĂNG NHẬP NGAY'
+            )}
           </button>
           
-          <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <Link to="/" style={{ color: '#7f8c8d', textDecoration: 'none', fontSize: '14px' }}>← Quay lại trang chủ</Link>
+          <div className={styles.authFooter}>
+            <Link to="/" className={styles.backLink}>← Quay lại trang chủ</Link>
           </div>
         </form>
       </div>
