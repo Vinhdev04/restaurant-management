@@ -156,36 +156,3 @@
     }
   }
 }
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    background-color: $admin-primary;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 600;
-  }
-
-  .userInfo {
-    display: flex;
-    flex-direction: column;
-
-    .userName {
-      color: white;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .userRole {
-      font-size: 12px;
-      color: $admin-primary;
-      background-color: rgba($admin-primary, 0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      width: fit-content;
-    }
-  }
-}
