@@ -8,6 +8,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('manager'); // Mặc định là manager
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,13 +21,12 @@ const LoginPage = () => {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, role })
       });
       const data = await res.json();
       
       if (res.ok) {
         localStorage.setItem('restaurant_user', JSON.stringify(data.user)); 
-        // Reload lại trang để App nhận currentUser mới (hoặc dùng context/state nâng cao hơn)
         window.location.href = data.user.role === 'admin' ? '/admin' : '/staff';
       } else {
         setError(data.message || 'Sai tên đăng nhập hoặc mật khẩu!');
@@ -46,12 +46,27 @@ const LoginPage = () => {
             <span className={styles.logoIcon}>🍴</span>
           </div>
           <h2>ĐĂNG NHẬP HỆ THỐNG</h2>
-          <p>Nhập thông tin tài khoản nhân viên của bạn</p>
+          <p>Chọn vai trò và nhập thông tin tài khoản của bạn</p>
         </div>
 
         <form className={styles.authForm} onSubmit={handleSignIn}>
           {error && <div style={{ color: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.1)', padding: '10px', borderRadius: '5px', marginBottom: '15px', textAlign: 'center', fontSize: '14px' }}>{error}</div>}
           
+          <div className={styles.formGroup}>
+            <label htmlFor="role">Vai trò của bạn</label>
+            <select 
+              id="role" 
+              value={role} 
+              onChange={(e) => setRole(e.target.value)}
+              className={styles.roleSelect}
+              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '16px', backgroundColor: '#f9f9f9' }}
+            >
+              <option value="admin">Quản trị viên (Admin)</option>
+              <option value="manager">Quản lý (Manager)</option>
+              <option value="chef">Đầu bếp (Chef)</option>
+            </select>
+          </div>
+
           <div className={styles.formGroup}>
             <label htmlFor="username">Tên đăng nhập</label>
             <input
