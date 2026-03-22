@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Swal from 'sweetalert2';
 import styles from './MenuPage.module.scss';
-import { menuCategories, menuItems } from '@constants/menuContent';
+import { menuCategories } from '@constants/menuContent';
 import { useParams, useNavigate } from 'react-router-dom';
 import SkeletonItem from './SkeletonItem';
-import Modal from '@components/shared/Modal/Modal';
-import OrderForm from './OrderForm/OrderForm';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 const MenuPage = () => {
   const { category } = useParams();
@@ -17,8 +16,6 @@ const MenuPage = () => {
   const [displayItems, setDisplayItems] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const loaderRef = useRef(null);
   const itemsPerPage = 6;
 
@@ -29,27 +26,6 @@ const MenuPage = () => {
     'drinks': 'beverages',
     'desserts': 'desserts',
     'all': ''
-  };
-
-  const handleOpenOrderModal = (item) => {
-    setSelectedItem(item);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedItem(null);
-  };
-
-  const handleOrderSubmit = (orderData) => {
-    console.log('Order Submitted:', orderData);
-    
-    const optionsText = orderData.selectedOptions.length > 0 
-      ? `\nTùy chọn: ${orderData.selectedOptions.map(o => o.name).join(', ')}`
-      : '';
-      
-    alert(`Đặt món thành công!\n${orderData.quantity}x ${orderData.item.name}${optionsText}\nBàn số: ${orderData.tableNumber}\nTổng cộng: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderData.total)}`);
-    handleCloseModal();
   };
 
   const handleFilterClick = (catId) => {
@@ -88,18 +64,17 @@ const MenuPage = () => {
                           item.category === 'Tráng miệng' ? 'desserts' : 'main-courses',
               image: item.image,
               description: item.description || `Món ${item.name} tươi ngon mỗi ngày.`,
-              options: [],
-              recommendations: []
+              options: item.options || [],
+              recommendations: item.recommendations || [],
+              isSoldOut: item.isSoldOut
             }));
             
-            // Gộp với dữ liệu tĩnh để demo
-            const combinedMenu = [...menuItems, ...mappedData];
-            setBackendMenuItems(combinedMenu);
+            setBackendMenuItems(mappedData);
           }
         }
       } catch (error) {
         console.error("Lỗi tải menu:", error);
-        setBackendMenuItems(menuItems); // Fallback to static if error
+        setBackendMenuItems([]); 
       } finally {
         setLoading(false);
       }
@@ -187,29 +162,15 @@ const MenuPage = () => {
                   <p>{item.description}</p>
                   <button 
                     className={styles.orderBtn}
-                    onClick={() => handleOpenOrderModal(item)}
+                    onClick={() => navigate('/tablet')}
                   >
-                    Đặt món ngay
+                    Vào đặt món (Cần PIN)
                   </button>
                 </div>
               </div>
             ))
           )}
         </div>
-
-        {/* Modal for Ordering */}
-        <Modal 
-          isOpen={isModalOpen} 
-          onClose={handleCloseModal} 
-          title="Đặt Món Trực Tiếp"
-        >
-          {selectedItem && (
-            <OrderForm 
-              item={selectedItem} 
-              onSubmit={handleOrderSubmit} 
-            />
-          )}
-        </Modal>
 
         {/* Pagination Controls */}
         {!loading && allFilteredItems.length > itemsPerPage && (

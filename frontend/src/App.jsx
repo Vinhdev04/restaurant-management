@@ -6,8 +6,8 @@ import AdminMenu from './AdminMenu';
 import Chef from './Chef'; 
 import Manager from './Manager';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://127.0.0.1:5000';
 
 const socket = io(SOCKET_URL);
 

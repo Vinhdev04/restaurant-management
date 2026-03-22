@@ -161,34 +161,62 @@ const getGeneralStats = async (req, res) => {
     try {
         const totalMenu = await Menu.countDocuments();
         const totalTables = await Table.countDocuments();
-        const totalOrders = await Order.countDocuments({ paymentStatus: 'Đã thanh toán' });
         const totalStaff = await User.countDocuments({ role: { $in: ['manager', 'chef'] } });
         
-        // Giả lập dữ liệu biểu đồ từ dữ liệu thực tế (hoặc aggregations)
-        const revenueByMonth = [
-            { month: 'T1', amount: 120 },
-            { month: 'T2', amount: 150 },
-            { month: 'T3', amount: 180 },
-            { month: 'T4', amount: 220 },
-            { month: 'T5', amount: 260 },
-            { month: 'T6', amount: 310 }
-        ];
+        // Tính doanh thu thực tế từ Order
+        const paidOrders = await Order.find({ paymentStatus: 'Đã thanh toán' });
+        const actualRevenue = paidOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+        const totalOrders = paidOrders.length;
 
-        const popularCategories = await Menu.aggregate([
+        // Thống kê doanh thu theo tháng thực tế (Aggregation)
+        const revenueByMonthRaw = await Order.aggregate([
+            { $match: { paymentStatus: 'Đã thanh toán' } },
+            { $group: {
+                _id: { $month: "$createdAt" },
+                total: { $sum: "$totalAmount" }
+            }},
+            { $sort: { "_id": 1 } }
+        ]);
+
+        const months = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+        const revenueByMonth = months.map((m, index) => {
+            const found = revenueByMonthRaw.find(r => r._id === (index + 1));
+            return { month: m, amount: found ? found.total / 1000000 : 0 }; // Đơn vị triệu đồng
+        }).slice(0, new Date().getMonth() + 1); // Chỉ lấy đến tháng hiện tại
+
+        // Thống kê danh mục phổ biến
+        const popularCategoriesRaw = await Menu.aggregate([
             { $group: { _id: "$category", count: { $sum: 1 } } }
+        ]);
+
+        // Thống kê món ăn bán chạy nhất
+        const topItemsRaw = await Order.aggregate([
+            { $match: { paymentStatus: 'Đã thanh toán' } },
+            { $unwind: "$items" },
+            { $group: {
+                _id: "$items.menuItemId",
+                count: { $sum: "$items.quantity" }
+            }},
+            { $sort: { count: -1 } },
+            { $limit: 5 }
         ]);
 
         res.status(200).json({
             totalMenu,
             totalTables,
-            totalOrders: totalOrders + 1000, 
-            rating: "4.9/5",
-            customers: "500+",
+            totalOrders,
+            totalRevenue: actualRevenue,
             totalStaff,
             revenueByMonth,
-            popularCategories: popularCategories.map(c => ({ name: c._id, value: c.count }))
+            popularCategories: popularCategoriesRaw.map(c => ({ name: c._id, value: c.count })),
+            topItems: topItemsRaw.map((item, index) => ({
+                rank: index + 1,
+                name: item._id,
+                orders: `${item.count} món`
+            }))
         });
     } catch (error) {
+        console.error("Lỗi getGeneralStats:", error);
         res.status(500).json({ message: "Lỗi hệ thống!" });
     }
 };

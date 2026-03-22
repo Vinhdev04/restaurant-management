@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import styles from './HomePage.module.scss';
 import { features, workflows } from '@constants/homeContent.js';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ const HomePage = () => {
 
             <div className={styles.heroCta}>
               <button onClick={() => navigate('/tablet')} className={styles.btnPrimary}>
-                <span>Order tại bàn (Tablet)</span>
+                <span>Bắt đầu gọi món (Cần PIN)</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>

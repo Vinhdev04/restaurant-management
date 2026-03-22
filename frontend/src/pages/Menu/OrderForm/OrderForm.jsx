@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from './OrderForm.module.scss';
-import { menuItems } from '@constants/menuContent';
 
-const OrderForm = ({ item: initialItem, onSubmit }) => {
+const OrderForm = ({ item: initialItem, onSubmit, allItems = [] }) => {
   const [item, setItem] = useState(initialItem);
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [formData, setFormData] = useState({
     tableNumber: '',
+    pin: '',
     note: ''
   });
 
@@ -17,6 +17,23 @@ const OrderForm = ({ item: initialItem, onSubmit }) => {
     setQuantity(1);
     setSelectedOptions([]);
   }, [initialItem]);
+
+  const [tables, setTables] = useState([]);
+
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api'}/manager/tables`);
+        if (res.ok) {
+          const data = await res.json();
+          setTables(data);
+        }
+      } catch (error) {
+        console.error("Lỗi tải danh sách bàn:", error);
+      }
+    };
+    fetchTables();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,7 +55,7 @@ const OrderForm = ({ item: initialItem, onSubmit }) => {
   };
 
   const handleRecommendationClick = (recId) => {
-    const recItem = menuItems.find(i => i.id === recId);
+    const recItem = allItems.find(i => i.id === recId || i._id === recId);
     if (recItem) {
       setItem(recItem);
     }
@@ -48,7 +65,7 @@ const OrderForm = ({ item: initialItem, onSubmit }) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
-  const optionsTotal = selectedOptions.reduce((acc, opt) => acc + opt.price, 0);
+  const optionsTotal = (selectedOptions || []).reduce((acc, opt) => acc + opt.price, 0);
   const totalPrice = (item.price + optionsTotal) * quantity;
 
   const handleSubmit = (e) => {
@@ -63,7 +80,7 @@ const OrderForm = ({ item: initialItem, onSubmit }) => {
   };
 
   const recommendedItems = item.recommendations 
-    ? menuItems.filter(mi => item.recommendations.includes(mi.id))
+    ? allItems.filter(mi => item.recommendations.includes(mi.id) || item.recommendations.includes(mi._id))
     : [];
 
   return (
@@ -114,7 +131,7 @@ const OrderForm = ({ item: initialItem, onSubmit }) => {
 
       <div className={styles.formRow}>
         <div className={styles.formGroup}>
-          <label htmlFor="tableNumber">Số bàn</label>
+          <label htmlFor="tableNumber">Chọn bàn của quý khách</label>
           <select 
             id="tableNumber" 
             name="tableNumber" 
@@ -122,11 +139,32 @@ const OrderForm = ({ item: initialItem, onSubmit }) => {
             onChange={handleChange} 
             required
           >
-            <option value="">Chọn bàn</option>
-            {[...Array(20)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>Bàn {i + 1}</option>
+            <option value="">-- Chọn bàn --</option>
+            {tables.map(table => (
+              <option key={table._id} value={table.tableId}>
+                Bàn {table.tableId} {table.status === 'Đang dùng' ? '(Đang có khách)' : ''}
+              </option>
             ))}
           </select>
+          {formData.tableNumber && (
+            <div className={styles.pinSection} style={{ marginTop: '15px' }}>
+              <label htmlFor="pin">Nhập mã PIN để xác thực</label>
+              <input 
+                type="text" 
+                id="pin" 
+                name="pin" 
+                maxLength="6"
+                value={formData.pin} 
+                onChange={handleChange} 
+                placeholder="Nhập 6 số PIN..."
+                required
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', marginTop: '5px' }}
+              />
+              <p className={styles.helperText} style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+                * Vui lòng hỏi nhân viên mã PIN bàn này để gọi món.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

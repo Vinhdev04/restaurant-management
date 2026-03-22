@@ -12,7 +12,7 @@ const menuData = [
         name: "Tôm hùm bông sốt Singapore",
         price: 2800000,
         category: "Món chính",
-        image: "https://images.unsplash.com/photo-1559742811-824289511f48?q=80&w=500",
+        image: "https://placehold.co/800x600?text=Tom+Hum+Bong",
         description: "Tôm hùm bông thượng hạng kết hợp sốt Singapore đặc trưng.",
         isSoldOut: false
     },
@@ -20,7 +20,7 @@ const menuData = [
         name: "Chè khúc bạch",
         price: 45000,
         category: "Tráng miệng",
-        image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=500",
+        image: "https://placehold.co/800x600?text=Che+Khuk+Bach",
         description: "Món tráng miệng thanh mát, ngọt dịu.",
         isSoldOut: false
     },
@@ -28,7 +28,7 @@ const menuData = [
         name: "Coca Cola",
         price: 15000,
         category: "Đồ uống",
-        image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=500",
+        image: "https://placehold.co/800x600?text=Coca+Cola",
         description: "Nước giải khát có gas.",
         isSoldOut: false
     },
@@ -36,7 +36,7 @@ const menuData = [
         name: "Phở Bò Kobe",
         price: 850000,
         category: "Món chính",
-        image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?q=80&w=500",
+        image: "https://placehold.co/800x600?text=Pho+Bo+Kobe",
         description: "Thịt bò Kobe thượng hạng thái lát mỏng.",
         isSoldOut: false
     },
@@ -44,7 +44,7 @@ const menuData = [
         name: "Gỏi cuốn tôm thịt",
         price: 65000,
         category: "Khai vị",
-        image: "https://images.unsplash.com/photo-1539136788836-5699e78bab75?q=80&w=500",
+        image: "https://placehold.co/800x600?text=Goi+Cuon",
         description: "Món khai vị truyền thống Việt Nam.",
         isSoldOut: false
     },
@@ -52,7 +52,7 @@ const menuData = [
         name: "Bò bít tết Wagyu",
         price: 1200000,
         category: "Món chính",
-        image: "https://images.unsplash.com/photo-1546241072-48010ad2862c?q=80&w=500",
+        image: "https://placehold.co/800x600?text=Bo+Bit+Tet+Wagyu",
         description: "Thịt bò Wagyu mềm tan trong miệng.",
         isSoldOut: false
     },
@@ -60,8 +60,24 @@ const menuData = [
         name: "Sashimi tổng hợp",
         price: 450000,
         category: "Khai vị",
-        image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=500",
+        image: "https://placehold.co/800x600?text=Sashimi",
         description: "Các loại cá tươi sống từ Nhật Bản.",
+        isSoldOut: false
+    },
+    {
+        name: "Trà Đào Cam Sả",
+        price: 45000,
+        category: "Đồ uống",
+        image: "https://placehold.co/800x600?text=Tra+Dao",
+        description: "Trà đào thơm ngon với sả và cam tươi.",
+        isSoldOut: false
+    },
+    {
+        name: "Gà Quay Lu Thảo Mộc",
+        price: 350000,
+        category: "Món chính",
+        image: "https://placehold.co/800x600?text=Ga+Quay+Lu",
+        description: "Gà quay lu giòn rụm với hương vị thảo mộc.",
         isSoldOut: false
     }
 ];
@@ -82,7 +98,8 @@ const userData = [
     { username: "quanly", password: "123", role: "manager" },
     { username: "daubep", password: "123", role: "chef" },
     { username: "nhanvien1", password: "123", role: "manager" },
-    { username: "nhanvien2", password: "123", role: "chef" }
+    { username: "nhanvien2", password: "123", role: "chef" },
+    { username: "staff1", password: "123", role: "staff" }
 ];
 
 const reservationData = [

@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
+import styles from './Manager.module.scss';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 function Manager({ socket }) {
   const [activeTab, setActiveTab] = useState('tables');
   const [tables, setTables] = useState([]);
   const [pendingPayments, setPendingPayments] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
 
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [mergeTable1, setMergeTable1] = useState('');
   const [mergeTable2, setMergeTable2] = useState('');
+
+  const fetchMenu = async () => {
+    try {
+      const res = await fetch(`${API_URL}/admin/menu/all`);
+      if (res.ok) {
+        const data = await res.json();
+        setMenuItems(data);
+      }
+    } catch (error) { console.log("Lỗi tải thực đơn"); }
+  };
 
   const fetchTables = async () => {
     try {
@@ -42,19 +55,64 @@ function Manager({ socket }) {
   useEffect(() => {
     fetchTables();
     fetchPending();
+    fetchMenu();
 
     if (socket) {
       socket.on('PAYMENT_REQUESTED', () => fetchPending());
       socket.on('NEW_ORDER_RECEIVED', () => fetchTables()); 
       socket.on('PAYMENT_CONFIRMED', () => { fetchPending(); fetchTables(); });
+      socket.on('MENU_ITEM_UPDATED', () => fetchMenu());
+      socket.on('MENU_RESET_SUCCESS', () => fetchMenu());
+      socket.on('MENU_ITEM_ADDED', () => fetchMenu());
 
       return () => {
         socket.off('PAYMENT_REQUESTED');
         socket.off('NEW_ORDER_RECEIVED');
         socket.off('PAYMENT_CONFIRMED');
+        socket.off('MENU_ITEM_UPDATED');
+        socket.off('MENU_RESET_SUCCESS');
+        socket.off('MENU_ITEM_ADDED');
       };
     }
   }, [socket]);
+
+  const handleToggleSoldOut = async (id, currentStatus) => {
+    try {
+      const res = await fetch(`${API_URL}/manager/menu/toggle-sold-out`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, isSoldOut: !currentStatus })
+      });
+      if (res.ok) {
+        fetchMenu();
+      }
+    } catch (error) {
+      Swal.fire('Lỗi!', 'Không thể cập nhật trạng thái món.', 'error');
+    }
+  };
+
+  const handleResetMenu = async () => {
+    const result = await Swal.fire({
+      title: 'Reset trạng thái món?',
+      text: "Tất cả các món sẽ được đặt về trạng thái CÒN HÀNG.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Đồng ý',
+      cancelButtonText: 'Hủy'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`${API_URL}/manager/menu/reset-all`, { method: 'POST' });
+        if (res.ok) {
+          Swal.fire('Thành công!', 'Đã reset toàn bộ thực đơn.', 'success');
+          fetchMenu();
+        }
+      } catch (error) {
+        Swal.fire('Lỗi!', 'Không thể reset thực đơn.', 'error');
+      }
+    }
+  };
 
   const handleOpenTable = async (tableId) => {
     try {
@@ -65,29 +123,64 @@ function Manager({ socket }) {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(`✅ MỞ BÀN THÀNH CÔNG!\n\nBàn: ${data.tableId}\nMã PIN: ${data.unlockCode}`);
+        Swal.fire({
+          title: 'Mở bàn thành công!',
+          html: `
+            <div style="text-align: center;">
+              <p style="font-size: 18px;">Bàn: <strong>${data.tableId}</strong></p>
+              <p style="font-size: 24px; color: #14b8a6; font-weight: 800; letter-spacing: 4px;">PIN: ${data.pin}</p>
+              <p style="font-size: 14px; color: #64748b;">Hãy cung cấp mã này cho khách hàng</p>
+            </div>
+          `,
+          icon: 'success',
+          confirmButtonColor: '#14b8a6',
+          confirmButtonText: 'Đã rõ'
+        });
         fetchTables(); 
-      } else { alert(data.message); }
-    } catch (error) { alert("Lỗi kết nối khi mở bàn!"); }
+      } else { 
+        Swal.fire('Lỗi!', data.message, 'error');
+      }
+    } catch (error) { 
+      Swal.fire('Lỗi!', 'Không thể kết nối tới máy chủ', 'error');
+    }
   };
 
   const handleConfirmPayment = async (orderId, paymentMethod) => {
-    try {
-      const res = await fetch(`${API_URL}/manager/payments/confirm`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, paymentMethod })
-      });
-      if (res.ok) {
-        alert("✅ Đã xác nhận thanh toán!");
-        fetchPending();
-        fetchTables(); 
-      } else { alert("Không xác nhận được thanh toán."); }
-    } catch (error) { alert("Lỗi kết nối khi xác nhận thanh toán!"); }
+    const result = await Swal.fire({
+      title: 'Xác nhận thanh toán?',
+      text: "Hành động này sẽ giải phóng bàn và cập nhật doanh thu.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#14b8a6',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Đúng, xác nhận!',
+      cancelButtonText: 'Hủy'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`${API_URL}/manager/payments/confirm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId, paymentMethod })
+        });
+        if (res.ok) {
+          Swal.fire('Thành công!', 'Đã xác nhận thanh toán.', 'success');
+          fetchPending();
+          fetchTables(); 
+        } else { 
+          Swal.fire('Lỗi!', 'Không thể xác nhận thanh toán.', 'error');
+        }
+      } catch (error) { 
+        Swal.fire('Lỗi!', 'Không thể kết nối tới máy chủ', 'error');
+      }
+    }
   };
 
   const handleMergeEmptyTables = async () => {
-    if (!mergeTable1 || !mergeTable2 || mergeTable1 === mergeTable2) return alert("Vui lòng chọn 2 bàn khác nhau!");
+    if (!mergeTable1 || !mergeTable2 || mergeTable1 === mergeTable2) {
+      return Swal.fire('Cảnh báo!', 'Vui lòng chọn 2 bàn khác nhau!', 'warning');
+    }
     try {
       const res = await fetch(`${API_URL}/manager/table/merge`, {
         method: 'POST',
@@ -96,156 +189,175 @@ function Manager({ socket }) {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(`✅ ${data.message}\n\nMã PIN của bàn mới: ${data.unlockCode}`);
+        Swal.fire('Thành công!', data.message, 'success');
         setShowMergeModal(false);
         fetchTables();
-      } else { alert(data.message); }
-    } catch (error) { alert("Lỗi kết nối ghép bàn!"); }
+      } else { 
+        Swal.fire('Lỗi!', data.message, 'error');
+      }
+    } catch (error) { 
+      Swal.fire('Lỗi!', 'Không thể thực hiện ghép bàn', 'error');
+    }
   };
 
   const handleUnmergeTable = async (tableId) => {
-    if(!window.confirm(`Bạn có chắc muốn tách bàn [${tableId}] về lại trạng thái ban đầu?`)) return;
-    try {
-      const res = await fetch(`${API_URL}/manager/table/unmerge`, {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ tableId })
-      });
-      if(res.ok) {
-        alert("Đã tách bàn thành công!");
-        fetchTables();
+    const result = await Swal.fire({
+      title: 'Xác nhận tách bàn?',
+      text: `Bạn có muốn tách bàn [${tableId}] về trạng thái ban đầu?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Đúng, tách bàn!',
+      cancelButtonText: 'Hủy'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(`${API_URL}/manager/table/unmerge`, {
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify({ tableId })
+        });
+        if(res.ok) {
+          Swal.fire('Đã tách!', 'Bàn đã được tách thành công.', 'success');
+          fetchTables();
+        }
+      } catch (error) { 
+        Swal.fire('Lỗi!', 'Không thể thực hiện tách bàn', 'error');
       }
-    } catch (error) { alert("Lỗi kết nối khi tách bàn!"); }
+    }
   };
 
   const emptyTables = tables.filter(t => t.status === 'Trống');
 
   return (
-    <div style={{ padding: '30px', backgroundColor: '#f5f6fa', minHeight: '100vh', fontFamily: 'Arial' }}>
-      <div style={{ marginBottom: '20px', borderBottom: '2px solid #ddd', paddingBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
-        <div>
-          <button onClick={() => setActiveTab('tables')} style={{ padding: '10px 20px', marginRight: '10px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', border: 'none', borderRadius: '5px', backgroundColor: activeTab === 'tables' ? '#3498db' : '#ecf0f1', color: activeTab === 'tables' ? 'white' : '#333' }}>🗺️ Sơ đồ bàn</button>
-          <button onClick={() => setActiveTab('payments')} style={{ padding: '10px 20px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', border: 'none', borderRadius: '5px', backgroundColor: activeTab === 'payments' ? '#e67e22' : '#ecf0f1', color: activeTab === 'payments' ? 'white' : '#333' }}>🧾 Chờ thanh toán ({pendingPayments.length})</button>
+    <div className={styles.managerContainer}>
+      <div className={styles.topNav}>
+        <div className={styles.tabGroup}>
+          <button 
+            onClick={() => setActiveTab('tables')} 
+            className={`${styles.tabBtn} ${activeTab === 'tables' ? styles.active : ''}`}
+          >
+            🗺️ Sơ đồ bàn
+          </button>
+          <button 
+            onClick={() => setActiveTab('payments')} 
+            className={`${styles.tabBtn} ${activeTab === 'payments' ? styles.active : ''}`}
+          >
+            🧾 Chờ thanh toán 
+            {pendingPayments.length > 0 && <span className={styles.badge}>{pendingPayments.length}</span>}
+          </button>
+          <button 
+            onClick={() => setActiveTab('menu')} 
+            className={`${styles.tabBtn} ${activeTab === 'menu' ? styles.active : ''}`}
+          >
+            🍴 Quản lý món
+          </button>
         </div>
+        
         {activeTab === 'tables' && (
-          <button onClick={() => setShowMergeModal(true)} style={{ padding: '10px 20px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', border: 'none', borderRadius: '5px', backgroundColor: '#8e44ad', color: 'white' }}>
+          <button onClick={() => setShowMergeModal(true)} className={styles.mergeBtn}>
             🔗 Ghép 2 bàn trống
+          </button>
+        )}
+
+        {activeTab === 'menu' && (
+          <button onClick={handleResetMenu} className={styles.resetBtn}>
+            🔄 Reset Thực Đơn
           </button>
         )}
       </div>
 
-      {/* ===================== TAB SƠ ĐỒ BÀN ===================== */}
-      {activeTab === 'tables' && (
-        <div>
-          <h2 style={{ marginTop: 0, color: '#2c3e50' }}>🗺️ Sơ đồ bàn hiện tại</h2>
-          {tables.length === 0 ? <p>Chưa có dữ liệu bàn.</p> : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
-              {tables.map(table => (
-                <div key={table._id} style={{ backgroundColor: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderTop: `5px solid ${table.status === 'Trống' ? '#2ecc71' : table.status === 'Đang phục vụ' ? '#3498db' : '#e74c3c'}` }}>
-                  <h3 style={{ margin: '0 0 10px 0', fontSize: '24px' }}>{table.tableId}</h3>
-                  <p style={{ fontWeight: 'bold', color: table.status === 'Trống' ? '#27ae60' : '#7f8c8d' }}>{table.status}</p>
-                  
+      <div className={styles.content}>
+        {activeTab === 'tables' && (
+          <div className={styles.tableGrid}>
+            {tables.map(table => (
+              <div 
+                key={table._id} 
+                className={`${styles.tableCard} ${styles[table.status.replace(/\s+/g, '')]}`}
+              >
+                <h3>Bàn {table.tableId}</h3>
+                <p className={styles.status}>{table.status}</p>
+                {table.pin && <p className={styles.pin}>PIN: {table.pin}</p>}
+                
+                <div className={styles.actions}>
                   {table.status === 'Trống' && (
-                    <>
-                      <button onClick={() => handleOpenTable(table.tableId)} style={{ padding: '10px 15px', backgroundColor: '#2ecc71', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', width: '100%', marginBottom: table.tableId.includes(' & ') ? '10px' : '0' }}>🔓 MỞ BÀN</button>
-                      
-                      {table.tableId.includes(' & ') && (
-                        <button onClick={() => handleUnmergeTable(table.tableId)} style={{ padding: '8px 15px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', width: '100%' }}>✂️ Tách bàn</button>
-                      )}
-                    </>
+                    <button onClick={() => handleOpenTable(table.tableId)}>Mở bàn</button>
                   )}
-
-                  {table.status === 'Đang phục vụ' && (
-                    <div style={{ backgroundColor: '#ecf0f1', padding: '10px', borderRadius: '5px', fontSize: '14px', marginBottom: '10px' }}>
-                      PIN: <strong style={{ letterSpacing: '2px', fontSize: '18px' }}>{table.unlockCode}</strong>
-                    </div>
+                  {table.status === 'Đang dùng' && (
+                    <button className={styles.unmerge} onClick={() => handleUnmergeTable(table.tableId)}>Hủy bàn</button>
                   )}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            ))}
+          </div>
+        )}
 
-      {/* ===================== TAB QUẢN LÝ THANH TOÁN ===================== */}
-      {activeTab === 'payments' && (
-        <div>
-           <h2 style={{ marginTop: 0, color: '#2c3e50' }}>🧾 Quản lý duyệt thanh toán</h2>
-           {pendingPayments.length === 0 ? <p>Hiện không có đơn nào chờ thanh toán.</p> : (
-             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '20px' }}>
-              {Object.values(pendingPayments.reduce((acc, order) => {
-                const key = order.tableId;
-                if (!acc[key]) acc[key] = { tableId: order.tableId, orders: [], totalAmount: 0, baseOrderId: order._id };
-                acc[key].orders.push(order);
-                acc[key].totalAmount += order.totalAmount || 0;
-                return acc;
-              }, {})).map(group => (
-                <div key={group.tableId} style={{ backgroundColor: 'white', borderRadius: '10px', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)', position: 'relative' }}>
-                  
-                  {/* NHÃN HIỂN THỊ PHƯƠNG THỨC KHÁCH ĐÃ CHỌN (TIỀN MẶT HAY CHUYỂN KHOẢN) */}
-                  <div style={{ position: 'absolute', top: '15px', right: '15px', padding: '5px 10px', borderRadius: '5px', fontSize: '12px', fontWeight: 'bold', color: 'white', backgroundColor: group.orders[0]?.paymentMethod === 'BANK_TRANSFER' ? '#2980b9' : '#27ae60' }}>
-                    {group.orders[0]?.paymentMethod === 'BANK_TRANSFER' ? '💳 Khách chuyển khoản' : '💵 Khách trả tiền mặt'}
+        {activeTab === 'payments' && (
+          <div className={styles.paymentList}>
+            {pendingPayments.length === 0 ? (
+              <p className={styles.empty}>Không có yêu cầu thanh toán nào.</p>
+            ) : (
+              pendingPayments.map(order => (
+                <div key={order._id} className={styles.paymentCard}>
+                  <div className={styles.orderInfo}>
+                    <h3>Bàn {order.tableId}</h3>
+                    <p>Tổng: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}</p>
+                    <p>Phương thức: {order.paymentMethod === 'BANK_TRANSFER' ? 'Chuyển khoản' : 'Tiền mặt'}</p>
                   </div>
-
-                  <h3 style={{ marginTop: 0, borderBottom: '2px solid #ecf0f1', paddingBottom: '10px', color: '#2c3e50' }}>Bàn: {group.tableId}</h3>
-                  {group.orders.map(order => (
-                    <div key={order._id} style={{ marginBottom: '15px', borderBottom: '1px dashed #ecf0f1', paddingBottom: '10px' }}>
-                      <p style={{ margin: '0 0 8px 0', fontSize: '12px', color: '#95a5a6' }}>Mã đơn: {order._id.slice(-6)}</p>
-                      <ul style={{ paddingLeft: '0', listStyleType: 'none', margin: '0', fontSize: '14px' }}>
-                        {order.items.map((item, idx) => (
-                          <li key={idx} style={{ textDecoration: item.status === 'Hết món' ? 'line-through' : 'none', color: item.status === 'Hết món' ? '#e74c3c' : 'inherit', marginBottom: '6px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                              <span>{item.quantity}x {item.menuItemId} {item.status === 'Hết món' && <span style={{fontSize:'12px'}}><br/>(Hết)</span>}</span>
-                              <span style={{ fontWeight: 'bold' }}>{(item.price * item.quantity).toLocaleString()} đ</span>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <p style={{ fontWeight: 'bold', color: '#c0392b', fontSize: '20px', textAlign: 'right', marginTop: '15px' }}>Tổng gộp: {(group.totalAmount || 0).toLocaleString()} đ</p>
-                  
-                  {/* NÚT BẤM XÁC NHẬN - SẼ LÀM MỜ NÚT MÀ KHÁCH KHÔNG CHỌN */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '15px' }}>
-                    <button 
-                      onClick={() => handleConfirmPayment(group.baseOrderId, 'CASH')} 
-                      style={{ padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer', backgroundColor: '#27ae60', color: 'white', fontWeight: 'bold', fontSize: '15px', opacity: group.orders[0]?.paymentMethod === 'BANK_TRANSFER' ? 0.4 : 1 }}
-                    >
-                      ✅ Xác nhận đã thu TIỀN MẶT
-                    </button>
-                    <button 
-                      onClick={() => handleConfirmPayment(group.baseOrderId, 'BANK_TRANSFER')} 
-                      style={{ padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer', backgroundColor: '#2980b9', color: 'white', fontWeight: 'bold', fontSize: '15px', opacity: group.orders[0]?.paymentMethod === 'CASH' ? 0.4 : 1 }}
-                    >
-                      ✅ Xác nhận đã nhận CHUYỂN KHOẢN
-                    </button>
-                  </div>
-
+                  <button onClick={() => handleConfirmPayment(order._id, order.paymentMethod)}>Xác nhận</button>
                 </div>
-              ))}
-             </div>
-           )}
-        </div>
-      )}
+              ))
+            )}
+          </div>
+        )}
 
-      {/* ===================== POPUP GHÉP BÀN ===================== */}
+        {activeTab === 'menu' && (
+          <div className={styles.menuGrid}>
+            {menuItems.map(item => (
+              <div key={item._id} className={`${styles.menuCard} ${item.isSoldOut ? styles.soldOut : ''}`}>
+                <img src={item.image} alt={item.name} />
+                <div className={styles.menuInfo}>
+                  <h4>{item.name}</h4>
+                  <p>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}</p>
+                  <button 
+                    onClick={() => handleToggleSoldOut(item._id, item.isSoldOut)}
+                    className={item.isSoldOut ? styles.availableBtn : styles.soldOutBtn}
+                  >
+                    {item.isSoldOut ? 'Hết hàng' : 'Còn hàng'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ===================== MODAL GHÉP BÀN ===================== */}
       {showMergeModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '10px', width: '400px', boxShadow: '0 4px 15px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ marginTop: 0, color: '#2c3e50' }}>🔗 Ghép 2 Bàn Trống</h3>
-            <div style={{ margin: '20px 0' }}>
-              <select value={mergeTable1} onChange={e => setMergeTable1(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc', fontSize: '16px', marginBottom: '15px' }}>
-                <option value="">-- Chọn bàn thứ 1 --</option>
-                {emptyTables.map(t => <option key={t._id} value={t.tableId}>{t.tableId}</option>)}
-              </select>
-              <select value={mergeTable2} onChange={e => setMergeTable2(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc', fontSize: '16px' }}>
-                <option value="">-- Chọn bàn thứ 2 --</option>
-                {emptyTables.filter(t => t.tableId !== mergeTable1).map(t => <option key={t._id} value={t.tableId}>{t.tableId}</option>)}
-              </select>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h3>🔗 Ghép 2 Bàn Trống</h3>
+            <div className={styles.formBody}>
+              <div className={styles.formGroup}>
+                <label>Bàn thứ nhất</label>
+                <select value={mergeTable1} onChange={e => setMergeTable1(e.target.value)}>
+                  <option value="">-- Chọn bàn --</option>
+                  {emptyTables.map(t => <option key={t._id} value={t.tableId}>{t.tableId}</option>)}
+                </select>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Bàn thứ hai</label>
+                <select value={mergeTable2} onChange={e => setMergeTable2(e.target.value)}>
+                  <option value="">-- Chọn bàn --</option>
+                  {emptyTables.filter(t => t.tableId !== mergeTable1).map(t => <option key={t._id} value={t.tableId}>{t.tableId}</option>)}
+                </select>
+              </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button onClick={() => setShowMergeModal(false)} style={{ padding: '10px 15px', borderRadius: '5px', border: '1px solid #ccc', backgroundColor: 'white', cursor: 'pointer' }}>Hủy</button>
-              <button onClick={handleMergeEmptyTables} style={{ padding: '10px 15px', borderRadius: '5px', border: 'none', backgroundColor: '#8e44ad', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}>Tạo bàn chung</button>
+            <div className={styles.modalFooter}>
+              <button onClick={() => setShowMergeModal(false)} className={styles.cancelBtn}>Hủy</button>
+              <button onClick={handleMergeEmptyTables} className={styles.confirmBtn}>Ghép bàn ngay</button>
             </div>
           </div>
         </div>

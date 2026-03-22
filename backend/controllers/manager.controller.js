@@ -1,5 +1,6 @@
 const Table = require('../models/Table.model');
 const Order = require('../models/Order.model');
+const Menu = require('../models/Menu.model');
 
 // 1. Lấy danh sách toàn bộ bàn
 const getAllTables = async (req, res) => {
@@ -23,7 +24,12 @@ const openTable = async (req, res) => {
             { new: true }
         );
 
-        res.status(200).json({ message: "Đã mở bàn thành công!", table });
+        // Trả về tableId và pin để FE hiển thị đúng
+        res.status(200).json({ 
+            message: "Đã mở bàn thành công!", 
+            tableId: table.tableId, 
+            pin: table.pin 
+        });
     } catch (error) {
         res.status(500).json({ message: "Lỗi hệ thống!" });
     }
@@ -87,11 +93,61 @@ const unmergeTable = async (req, res) => {
     }
 };
 
+// 7. Bật/Tắt trạng thái hết hàng của món
+const toggleMenuItemSoldOut = async (req, res) => {
+    try {
+        const { id, isSoldOut } = req.body;
+        const updatedItem = await Menu.findByIdAndUpdate(id, { isSoldOut }, { new: true });
+        
+        // Phát tín hiệu Real-time cho mọi người
+        const io = req.app.get('socketio');
+        io.emit('MENU_ITEM_UPDATED', updatedItem);
+
+        res.status(200).json({ message: "Cập nhật trạng thái món thành công!", item: updatedItem });
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi hệ thống!" });
+    }
+};
+
+// 8. Reset toàn bộ trạng thái hết hàng
+const resetAllMenuStatus = async (req, res) => {
+    try {
+        await Menu.updateMany({}, { isSoldOut: false });
+        
+        // Phát tín hiệu Real-time cho mọi người
+        const io = req.app.get('socketio');
+        io.emit('MENU_RESET_SUCCESS');
+
+        res.status(200).json({ message: "Đã đặt lại toàn bộ trạng thái món ăn!" });
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi hệ thống!" });
+    }
+};
+
+// 9. Thêm món mới
+const addMenuItem = async (req, res) => {
+    try {
+        const { name, price, category, image, description } = req.body;
+        const newItem = new Menu({ name, price, category, image, description });
+        await newItem.save();
+
+        const io = req.app.get('socketio');
+        io.emit('MENU_ITEM_ADDED', newItem);
+
+        res.status(201).json({ message: "Thêm món thành công!", item: newItem });
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi hệ thống!" });
+    }
+};
+
 module.exports = {
     getAllTables,
     openTable,
     getPendingPayments,
     confirmPayment,
     mergeTables,
-    unmergeTable
+    unmergeTable,
+    toggleMenuItemSoldOut,
+    resetAllMenuStatus,
+    addMenuItem
 };

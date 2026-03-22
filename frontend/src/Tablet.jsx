@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import styles from './Tablet.module.scss';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 function Tablet({ socket }) {
   const [activeTableId, setActiveTableId] = useState(null); 
@@ -10,34 +11,40 @@ function Tablet({ socket }) {
   const [myTrackingOrders, setMyTrackingOrders] = useState([]); 
   const [selectedCategory, setSelectedCategory] = useState('Tất cả');
   const [pinInput, setPinInput] = useState('');
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [tables, setTables] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isOrdering, setIsOrdering] = useState(false);
-  const [showBill, setShowBill] = useState(false);
-  const [displayBill, setDisplayBill] = useState(null);
 
-  // 1. Tải thực đơn
-  const fetchMenu = async () => {
+  // 1. Tải thực đơn và danh sách bàn
+  const fetchData = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_URL}/admin/menu/all`);
-      if (res.ok) {
-        const data = await res.json();
-        setMenuItems(Array.isArray(data) ? data : []);
+      const [menuRes, tableRes] = await Promise.all([
+        fetch(`${API_URL}/admin/menu/all`),
+        fetch(`${API_URL}/manager/tables`)
+      ]);
+      if (menuRes.ok) {
+        const data = await menuRes.json();
+        setMenuItems(data);
+      }
+      if (tableRes.ok) {
+        const data = await tableRes.json();
+        setTables(data);
       }
     } catch (error) {
-      console.error("Lỗi tải menu:", error);
+      console.error("Lỗi tải dữ liệu:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchMenu();
+    fetchData();
   }, []);
 
-  // 2. Xử lý mở bàn (Unlock)
+  // 2. Xử lý mở Tablet (Unlock)
   const handleUnlock = async () => {
-    if (!pinInput) return alert("Vui lòng nhập mã PIN!");
+    if (!pinInput) return Swal.fire('Thông báo', 'Vui lòng nhập mã PIN!', 'warning');
     setIsLoading(true);
     try {
       const res = await fetch(`${API_URL}/customer/verify-pin`, {
@@ -47,15 +54,23 @@ function Tablet({ socket }) {
       });
       const data = await res.json();
       if (res.ok) {
+        setIsUnlocked(true);
         setActiveTableId(data.tableId);
-        // Lưu vào localStorage để không bị mất khi reload
         localStorage.setItem('active_table_id', data.tableId);
+        localStorage.setItem('tablet_unlocked', 'true');
         fetchOldOrders(data.tableId);
+        Swal.fire({
+          title: 'Mở bàn thành công!',
+          text: `Chào mừng quý khách tại bàn ${data.tableId}`,
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
       } else {
-        alert(data.message || "Mã PIN không chính xác hoặc bàn chưa được mở!");
+        Swal.fire('Thất bại', data.message || "Mã PIN không chính xác!", 'error');
       }
     } catch (error) {
-      alert("Lỗi kết nối máy chủ!");
+      Swal.fire('Lỗi', 'Không thể kết nối máy chủ!', 'error');
     } finally {
       setIsLoading(false);
     }
@@ -63,16 +78,34 @@ function Tablet({ socket }) {
 
   useEffect(() => {
     const savedTableId = localStorage.getItem('active_table_id');
-    if (savedTableId) {
+    const unlocked = localStorage.getItem('tablet_unlocked');
+    if (savedTableId && unlocked === 'true') {
       setActiveTableId(savedTableId);
+      setIsUnlocked(true);
       fetchOldOrders(savedTableId);
     }
   }, []);
 
+  const handleSelectTable = (tableId) => {
+    setActiveTableId(tableId);
+    localStorage.setItem('active_table_id', tableId);
+    fetchOldOrders(tableId);
+  };
+
+  const handleLogout = () => {
+    setActiveTableId(null);
+    setIsUnlocked(false);
+    localStorage.removeItem('active_table_id');
+    localStorage.removeItem('tablet_unlocked');
+  };
+
   const fetchOldOrders = async (tableId) => {
     try {
       const res = await fetch(`${API_URL}/customer/${tableId}`);
-      if (res.ok) setMyTrackingOrders(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        setMyTrackingOrders(data);
+      }
     } catch (error) {}
   };
 
@@ -82,7 +115,7 @@ function Tablet({ socket }) {
     if (existing) {
       setCart(cart.map(c => c._id === item._id ? { ...c, quantity: c.quantity + 1 } : c));
     } else {
-      setCart([...cart, { ...item, quantity: 1 }]);
+      setCart([...cart, { ...item, quantity: 1, menuItemId: item.name }]);
     }
   };
 
@@ -104,15 +137,22 @@ function Tablet({ socket }) {
       const res = await fetch(`${API_URL}/customer/order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tableId: activeTableId, items: cart })
+        body: JSON.stringify({ 
+          tableId: activeTableId, 
+          items: cart.map(item => ({
+            menuItemId: item.name,
+            quantity: item.quantity,
+            price: item.price
+          }))
+        })
       });
       if (res.ok) {
-        alert("✅ Đã gửi đơn hàng xuống bếp!");
+        Swal.fire('Thành công', 'Đã gửi đơn hàng xuống bếp!', 'success');
         setCart([]);
         fetchOldOrders(activeTableId);
       }
     } catch (error) {
-      alert("Lỗi đặt món!");
+      Swal.fire('Lỗi', 'Không thể đặt món lúc này!', 'error');
     } finally {
       setIsOrdering(false);
     }
@@ -120,23 +160,56 @@ function Tablet({ socket }) {
 
   // 5. Yêu cầu thanh toán
   const handleRequestPayment = async () => {
-    if (!window.confirm("Bạn muốn yêu cầu thanh toán cho bàn này?")) return;
-    setIsLoading(true);
-    try {
-      const res = await fetch(`${API_URL}/customer/request-payment`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tableId: activeTableId })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setDisplayBill(data.order);
-        setShowBill(true);
+    const { value: paymentMethod } = await Swal.fire({
+      title: 'Xác nhận thanh toán',
+      text: "Quý khách vui lòng chọn phương thức thanh toán:",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Tiền mặt 💵',
+      cancelButtonText: 'Chuyển khoản 💳',
+      confirmButtonColor: '#27ae60',
+      cancelButtonColor: '#2980b9',
+      reverseButtons: true
+    });
+
+    // Swal returns value: true for confirm, undefined for cancel, but we want to know WHICH button
+    // Actually, it's better to use input options or custom buttons
+    
+    const result = await Swal.fire({
+      title: 'Chọn phương thức thanh toán',
+      input: 'radio',
+      inputOptions: {
+        'CASH': 'Tiền mặt 💵',
+        'BANK_TRANSFER': 'Chuyển khoản 💳'
+      },
+      inputValidator: (value) => {
+        if (!value) return 'Quý khách vui lòng chọn 1 phương thức!';
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Xác nhận',
+      cancelButtonText: 'Hủy'
+    });
+
+    if (result.isConfirmed) {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${API_URL}/customer/request-payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            tableId: activeTableId,
+            paymentMethod: result.value 
+          })
+        });
+        if (res.ok) {
+          Swal.fire('Đã gửi yêu cầu', 'Nhân viên sẽ đến hỗ trợ quý khách ngay!', 'success');
+          // Sau khi yêu cầu thanh toán, có thể xóa session hoặc để Manager confirm mới xóa
+        }
+      } catch (error) {
+        Swal.fire('Lỗi', 'Không thể gửi yêu cầu thanh toán!', 'error');
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      alert("Lỗi gửi yêu cầu thanh toán!");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -146,153 +219,148 @@ function Tablet({ socket }) {
     ? menuItems 
     : menuItems.filter(item => item.category === selectedCategory);
 
-  // Màn hình đăng nhập (PIN)
-  if (!activeTableId) {
+  // Màn hình 1: Nhập PIN
+  if (!isUnlocked) {
     return (
-      <div className={styles.tabletContainer}>
-        <div className={styles.loginScreen}>
-          <h1>CHÀO MỪNG QUÝ KHÁCH</h1>
-          <p>Vui lòng nhập mã PIN do nhân viên cung cấp để gọi món</p>
-          <div className={styles.pinBox}>
-            <input 
-              type="text" 
-              maxLength="6" 
-              placeholder="Mã PIN 6 số..." 
-              value={pinInput}
-              onChange={e => setPinInput(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && handleUnlock()}
-            />
-            <button onClick={handleUnlock} disabled={isLoading}>
-              {isLoading ? 'ĐANG MỞ...' : 'MỞ BÀN'}
-            </button>
-          </div>
+      <div className={styles.loginOverlay}>
+        <div className={styles.loginCard}>
+          <h1>🔓 Mở Khóa Tablet</h1>
+          <p>Vui lòng nhập mã PIN được cung cấp bởi nhân viên để bắt đầu.</p>
+          <input 
+            type="password" 
+            placeholder="Nhập mã PIN..." 
+            value={pinInput} 
+            onChange={(e) => setPinInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleUnlock()}
+          />
+          <button onClick={handleUnlock} disabled={isLoading}>
+            {isLoading ? 'Đang kiểm tra...' : 'XÁC NHẬN'}
+          </button>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className={styles.tabletContainer}>
-      {isLoading && (
-        <div className={styles.loadingOverlay}>
-          <div className={styles.spinner}></div>
-          <p>Vui lòng đợi trong giây lát...</p>
-        </div>
-      )}
-
-      <div className={styles.mainContent}>
-        {/* Cột 1: Danh mục */}
-        <div className={styles.sidebar}>
-          <h2>Thực Đơn</h2>
-          <div className={styles.categoryList}>
-            {categories.map(cat => (
+  // Màn hình 2: Chọn bàn (Nếu chưa chọn)
+  if (!activeTableId) {
+    return (
+      <div className={styles.tableSelectionOverlay}>
+        <div className={styles.tableSelectionContainer}>
+          <h2>📍 CHỌN BÀN CỦA QUÝ KHÁCH</h2>
+          <p>Vui lòng chọn số bàn bạn đang ngồi để tiếp tục gọi món.</p>
+          <div className={styles.tableGrid}>
+            {tables.map(table => (
               <button 
-                key={cat} 
-                className={`${styles.categoryBtn} ${selectedCategory === cat ? styles.active : ''}`}
-                onClick={() => setSelectedCategory(cat)}
+                key={table._id}
+                className={`${styles.tableBtn} ${table.status !== 'Trống' ? styles.occupied : ''}`}
+                onClick={() => handleSelectTable(table.tableId)}
               >
-                {cat}
+                Bàn {table.tableId}
+                <span>({table.status})</span>
               </button>
             ))}
           </div>
+          <button className={styles.logoutBtn} onClick={handleLogout}>Đăng xuất</button>
         </div>
+      </div>
+    );
+  }
 
-        {/* Cột 2: Thực đơn */}
-        <div className={styles.menuGrid}>
-          {filteredMenu.map(item => (
-            <div key={item._id} className={styles.menuCard}>
-              <div className={styles.imageWrapper}>
-                <img src={item.image || 'https://placehold.co/500'} alt={item.name} />
-                <span className={styles.priceTag}>{item.price.toLocaleString()} đ</span>
-              </div>
-              <div className={styles.cardInfo}>
-                <h3>{item.name}</h3>
-                <p className={styles.desc}>{item.description || "Món ăn ngon miệng, đảm bảo vệ sinh an toàn thực phẩm."}</p>
-                <button 
-                  className={styles.addBtn}
-                  onClick={() => addToCart(item)}
-                  disabled={item.isSoldOut}
-                >
-                  {item.isSoldOut ? 'HẾT HÀNG' : '+ THÊM VÀO GIỎ'}
-                </button>
-              </div>
-            </div>
+  // Màn hình 3: Thực đơn chính
+  return (
+    <div className={styles.tabletContainer}>
+      <header className={styles.header}>
+        <div className={styles.tableInfo}>
+          <span className={styles.tableNumber}>BÀN: {activeTableId}</span>
+          <button className={styles.changeTable} onClick={() => setActiveTableId(null)}>Đổi bàn</button>
+        </div>
+        <div className={styles.cartSummary}>
+          <span>🛒 Giỏ hàng: <strong>{cart.length} món</strong></span>
+          <button onClick={handleLogout}>🔓 Khóa Tablet</button>
+        </div>
+      </header>
+
+      <div className={styles.mainLayout}>
+        <aside className={styles.sidebar}>
+          {categories.map(cat => (
+            <button 
+              key={cat} 
+              className={selectedCategory === cat ? styles.active : ''}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              {cat}
+            </button>
           ))}
-        </div>
+        </aside>
 
-        {/* Cột 3: Giỏ hàng & Theo dõi */}
-        <div className={styles.cartSidebar}>
-          <div className={styles.cartHeader}>
-            <h2>Giỏ hàng</h2>
-            <span className={styles.tableNum}>Bàn #{activeTableId}</span>
+        <main className={styles.menuContent}>
+          <div className={styles.menuGrid}>
+            {filteredMenu.map(item => (
+              <div key={item._id} className={`${styles.menuCard} ${item.isSoldOut ? styles.soldOut : ''}`}>
+                <img src={item.image} alt={item.name} />
+                <div className={styles.itemInfo}>
+                  <h3>{item.name}</h3>
+                  <p className={styles.price}>{item.price.toLocaleString()}đ</p>
+                  <button 
+                    onClick={() => !item.isSoldOut && addToCart(item)}
+                    disabled={item.isSoldOut}
+                    className={item.isSoldOut ? styles.soldOutBtn : styles.addBtn}
+                  >
+                    {item.isSoldOut ? 'HẾT HÀNG' : 'THÊM +'}
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-          
-          <div className={styles.cartList}>
-            {cart.length === 0 && <p style={{textAlign:'center', color:'#7f8c8d', marginTop:'50px'}}>Chưa có món nào trong giỏ.</p>}
+        </main>
+
+        <aside className={styles.cartSidebar}>
+          <h2>Đơn hàng của bạn</h2>
+          <div className={styles.cartItems}>
             {cart.map(item => (
               <div key={item._id} className={styles.cartItem}>
-                <div className={styles.itemDetails}>
-                  <h4>{item.name}</h4>
-                  <p>{(item.price * item.quantity).toLocaleString()} đ</p>
+                <div className={styles.itemDetail}>
+                  <span>{item.name}</span>
+                  <strong>{(item.price * item.quantity).toLocaleString()}đ</strong>
                 </div>
-                <div className={styles.qtyControls}>
+                <div className={styles.qtyControl}>
                   <button onClick={() => updateCartQty(item._id, -1)}>-</button>
                   <span>{item.quantity}</span>
                   <button onClick={() => updateCartQty(item._id, 1)}>+</button>
                 </div>
               </div>
             ))}
+            {cart.length === 0 && <p className={styles.emptyCart}>Giỏ hàng trống...</p>}
           </div>
-
+          
           <div className={styles.cartFooter}>
-            <div className={styles.totalRow}>
+            <div className={styles.total}>
               <span>Tổng cộng:</span>
-              <span>{cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString()} đ</span>
+              <strong>{cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString()}đ</strong>
             </div>
-            <button 
-              className={styles.orderBtn}
-              onClick={handleOrder}
-              disabled={cart.length === 0 || isOrdering}
-            >
-              {isOrdering ? 'ĐANG GỬI...' : 'XÁC NHẬN ĐẶT MÓN'}
+            <button className={styles.orderBtn} onClick={handleOrder} disabled={cart.length === 0}>
+              ĐẶT MÓN NGAY
             </button>
-            <button 
-              className={styles.paymentBtn}
-              onClick={handleRequestPayment}
-            >
+            <button className={styles.paymentBtn} onClick={handleRequestPayment}>
               YÊU CẦU THANH TOÁN
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Popup Hóa đơn */}
-      {showBill && displayBill && (
-        <div className={styles.loadingOverlay}>
-          <div style={{ background: 'white', color: '#2c3e50', padding: '30px', borderRadius: '20px', width: '400px', maxWidth: '90%' }}>
-            <h2 style={{ textAlign: 'center', marginBottom: '20px', borderBottom: '2px dashed #ecf0f1', paddingBottom: '10px' }}>HÓA ĐƠN TẠM TÍNH</h2>
-            <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '20px' }}>
-              {displayBill.items.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                  <span>{item.name} x{item.quantity}</span>
-                  <span>{(item.price * item.quantity).toLocaleString()} đ</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ borderTop: '2px solid #2c3e50', paddingTop: '15px', display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.2rem' }}>
-              <span>TỔNG CỘNG:</span>
-              <span style={{ color: '#e74c3c' }}>{displayBill.totalAmount.toLocaleString()} đ</span>
-            </div>
-            <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.9rem', color: '#7f8c8d' }}>Vui lòng đợi nhân viên tại quầy xác nhận thanh toán.</p>
-            <button 
-              onClick={() => setShowBill(false)}
-              style={{ width: '100%', marginTop: '20px', padding: '12px', background: '#2c3e50', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
-            >
-              ĐÓNG
-            </button>
+          
+          <div className={styles.tracking}>
+            <h3>Theo dõi đơn:</h3>
+            {myTrackingOrders.map((order, i) => (
+              <div key={i} className={styles.trackingOrder}>
+                {order.items.map((item, idx) => (
+                  <div key={idx} className={styles.trackingItem}>
+                    <span>{item.menuItemId}</span>
+                    <span className={styles[item.status]}>{item.status}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
-        </div>
-      )}
+        </aside>
+      </div>
     </div>
   );
 }

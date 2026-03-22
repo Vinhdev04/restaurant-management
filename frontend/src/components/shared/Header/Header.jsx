@@ -41,6 +41,14 @@ const Header = () => {
 
   const isTabletPage = window.location.pathname === '/tablet';
 
+  const filteredNavigationItems = navigationItems.filter(item => {
+    // Only show "Quản lý" to admin, manager, chef
+    if (item.name === 'Quản lý') {
+      return currentUser && ['admin', 'manager', 'chef'].includes(currentUser.role);
+    }
+    return true;
+  });
+
   if (isTabletPage) return null;
 
   return (
@@ -60,7 +68,7 @@ const Header = () => {
         {/* Desktop Navigation */}
         <nav className={styles.navDesktop}>
           <ul className={styles.navList}>
-            {navigationItems.map((item, index) => (
+            {filteredNavigationItems.map((item, index) => (
               <li 
                 key={index} 
                 className={`${styles.navItem} ${item.dropdown ? styles.hasDropdown : ''}`}
@@ -109,11 +117,13 @@ const Header = () => {
                 {activeDropdown === 'user' && (
                   <div className={`${styles.dropdown} ${styles.dropdownActive}`}>
                     <ul className={styles.dropdownList}>
-                      <li className={styles.dropdownItem}>
-                        <Link to={currentUser.role === 'admin' ? '/admin' : '/staff'} className={styles.dropdownLink}>
-                          Dashboard
-                        </Link>
-                      </li>
+                      {['admin', 'manager', 'chef'].includes(currentUser.role) && (
+                        <li className={styles.dropdownItem}>
+                          <Link to={currentUser.role === 'admin' ? '/admin' : '/staff'} className={styles.dropdownLink}>
+                            Dashboard Quản Lý
+                          </Link>
+                        </li>
+                      )}
                       <li className={styles.dropdownItem}>
                         <button onClick={handleLogout} className={styles.dropdownLink} style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer' }}>
                           Đăng xuất
@@ -146,7 +156,7 @@ const Header = () => {
       {/* Mobile Navigation */}
       <div className={`${styles.mobileNav} ${mobileMenuOpen ? styles.mobileNavOpen : ''}`}>
         <ul className={styles.mobileNavList}>
-          {navigationItems.map((item, index) => (
+          {filteredNavigationItems.map((item, index) => (
             <li key={index} className={styles.mobileNavItem}>
               <div className={styles.mobileNavLinkWrapper}>
                 <Link 

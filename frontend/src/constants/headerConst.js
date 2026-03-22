@@ -14,6 +14,11 @@
     { 
       name: 'Đặt bàn', 
       path: '/reservation',
+      icon: '📅'
+    },
+    {
+      name: 'Gọi món',
+      path: '/tablet',
       icon: '🍽️'
     },
     { 

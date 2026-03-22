@@ -82,8 +82,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/reservation', reservationRoutes);
 
 // Khởi động server
-connectDB();
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-    console.log(`🚀 Server đang lắng nghe tại: http://localhost:${PORT}`);
-});
+const startServer = async () => {
+    await connectDB();
+    const PORT = process.env.PORT || 5000;
+    server.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Server đang lắng nghe tại: http://localhost:${PORT}`);
+    });
+};
+
+startServer();

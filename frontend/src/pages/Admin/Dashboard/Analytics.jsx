@@ -40,13 +40,7 @@ const Analytics = () => {
   const [chartData, setChartData] = useState(null);
   const [pieData, setPieData] = useState(null);
 
-  const topItems = [
-    { rank: 1, name: 'Bò Lúc Lắc', orders: '342 đơn' },
-    { rank: 2, name: 'Cá Hồi Áp Chảo', orders: '298 đơn' },
-    { rank: 3, name: 'Súp Hải Sản', orders: '256 đơn' },
-    { rank: 4, name: 'Gà Quay Lu', orders: '412 đơn' },
-    { rank: 5, name: 'Chè Khúc Bạch', orders: '287 đơn' },
-  ];
+  const [topItems, setTopItems] = useState([]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('restaurant_user');
@@ -58,42 +52,50 @@ const Analytics = () => {
         if (res.ok) {
           const data = await res.json();
           setStats([
-            { title: 'Doanh thu tổng', value: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalOrders * 150000)}`, change: '+18.2%', icon: '💵', color: 'success' },
+            { title: 'Doanh thu tổng', value: `${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalRevenue || 0)}`, change: '+18.2%', icon: '💵', color: 'success' },
             { title: 'Tổng đơn hàng', value: `${data.totalOrders}`, change: '+12.5%', icon: '🛍️', color: 'info' },
             { title: 'Thực đơn', value: `${data.totalMenu} món`, change: '+5.3%', icon: '🍴', color: 'warning' },
             { title: 'Nhân viên', value: data.totalStaff || '0', change: '+2', icon: '👥', color: 'error' },
           ]);
 
+          if (data.topItems) {
+            setTopItems(data.topItems);
+          }
+
           // Cập nhật dữ liệu biểu đồ Bar
-          setChartData({
-            labels: data.revenueByMonth.map(item => item.month),
-            datasets: [
-              {
-                label: 'Doanh thu (triệu VNĐ)',
-                data: data.revenueByMonth.map(item => item.amount),
-                backgroundColor: 'rgba(20, 184, 166, 0.8)',
-                borderRadius: 8,
-              },
-            ],
-          });
+          if (data.revenueByMonth) {
+            setChartData({
+              labels: data.revenueByMonth.map(item => item.month),
+              datasets: [
+                {
+                  label: 'Doanh thu (triệu VNĐ)',
+                  data: data.revenueByMonth.map(item => item.amount),
+                  backgroundColor: 'rgba(20, 184, 166, 0.8)',
+                  borderRadius: 8,
+                },
+              ],
+            });
+          }
 
           // Cập nhật dữ liệu biểu đồ Pie (Doughnut)
-          setPieData({
-            labels: data.popularCategories.map(item => item.name),
-            datasets: [
-              {
-                data: data.popularCategories.map(item => item.value),
-                backgroundColor: [
-                  '#14b8a6',
-                  '#0d9488',
-                  '#0f766e',
-                  '#115e59',
-                  '#134e4a',
-                ],
-                borderWidth: 0,
-              },
-            ],
-          });
+          if (data.popularCategories) {
+            setPieData({
+              labels: data.popularCategories.map(item => item.name),
+              datasets: [
+                {
+                  data: data.popularCategories.map(item => item.value),
+                  backgroundColor: [
+                    '#14b8a6',
+                    '#0d9488',
+                    '#0f766e',
+                    '#115e59',
+                    '#134e4a',
+                  ],
+                  borderWidth: 0,
+                },
+              ],
+            });
+          }
         }
       } catch (error) {
         console.error("Lỗi tải thống kê:", error);

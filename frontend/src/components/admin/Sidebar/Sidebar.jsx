@@ -42,6 +42,11 @@ const Sidebar = () => {
     return items;
   }, [currentUser]);
 
+  const handleLogout = () => {
+    localStorage.removeItem('restaurant_user');
+    window.location.href = '/';
+  };
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.logoContainer}>
@@ -73,14 +78,20 @@ const Sidebar = () => {
       </nav>
 
       {currentUser && (
-        <div className={styles.userProfile}>
-          <div className={styles.avatar}>
-            {currentUser.username.charAt(0).toUpperCase()}
+        <div className={styles.sidebarFooter}>
+          <div className={styles.userProfile}>
+            <div className={styles.avatar}>
+              {currentUser.username.charAt(0).toUpperCase()}
+            </div>
+            <div className={styles.userInfo}>
+              <span className={styles.userName}>{currentUser.username}</span>
+              <span className={styles.userRole}>{currentUser.role}</span>
+            </div>
           </div>
-          <div className={styles.userInfo}>
-            <span className={styles.userName}>{currentUser.username}</span>
-            <span className={styles.userRole}>{currentUser.role}</span>
-          </div>
+          <button onClick={handleLogout} className={styles.logoutBtn}>
+            <span className={styles.icon}>🚪</span>
+            <span className={styles.text}>Đăng xuất</span>
+          </button>
         </div>
       )}
     </aside>

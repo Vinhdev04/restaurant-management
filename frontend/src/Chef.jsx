@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 function Chef({ socket }) {
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' hoặc 'menu'
@@ -46,13 +46,7 @@ function Chef({ socket }) {
       const res = await fetch(`${API_URL}/admin/menu/all`); 
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) {
-          setMenuItems(data);
-        } else {
-          setMenuItems([]);
-        }
-      } else {
-        setMenuItems([]);
+        setMenuItems(data);
       }
     } catch (error) {}
   };
@@ -63,32 +57,16 @@ function Chef({ socket }) {
     fetchMenu();
 
     if (socket) {
-      socket.on('NEW_ORDER_RECEIVED', (newOrder) => {
-        setPendingOrders((prev) => [newOrder, ...prev]);
-      });
-
-      // NHẬN STATUS MỚI TỪ SOCKET (Hoàn thành hoặc Hết món)
-      socket.on('ITEM_COMPLETED', ({ orderId, itemId, status }) => {
-        setPendingOrders((prev) => prev.map(order => {
-          if (order._id === orderId) {
-            const newItems = order.items.map(item => 
-              item._id === itemId ? { ...item, status: status } : item
-            );
-            return { ...order, items: newItems };
-          }
-          return order;
-        }));
-      });
-
-      socket.on('ORDER_COMPLETED', (completedOrder) => {
-        setPendingOrders(prev => prev.filter(order => order._id !== completedOrder._id));
-        setCompletedOrders(prev => [completedOrder, ...prev]);
-      });
+      socket.on('NEW_ORDER_RECEIVED', () => fetchPendingOrders());
+      socket.on('ITEM_STATUS_UPDATED', () => { fetchPendingOrders(); fetchCompletedOrders(); });
+      socket.on('MENU_ITEM_UPDATED', () => fetchMenu());
+      socket.on('MENU_RESET_SUCCESS', () => fetchMenu());
 
       return () => {
         socket.off('NEW_ORDER_RECEIVED');
-        socket.off('ITEM_COMPLETED');
-        socket.off('ORDER_COMPLETED');
+        socket.off('ITEM_STATUS_UPDATED');
+        socket.off('MENU_ITEM_UPDATED');
+        socket.off('MENU_RESET_SUCCESS');
       };
     }
   }, [socket]);
@@ -96,21 +74,25 @@ function Chef({ socket }) {
   // HÀM CẬP NHẬT TRẠNG THÁI MÓN TRONG ĐƠN (XONG HOẶC HẾT)
   const handleUpdateItem = async (orderId, itemId, status) => {
     try {
-      await fetch(`${API_URL}/chef/update-item-status`, {
+      const res = await fetch(`${API_URL}/chef/update-item-status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId, itemId, status })
       });
+      if (res.ok) {
+        fetchPendingOrders();
+        fetchCompletedOrders();
+      }
     } catch (error) { alert("Lỗi kết nối Backend!"); }
   };
 
   // HÀM BÁO HẾT MÓN TRÊN TOÀN HỆ THỐNG
-  const handleToggleMenu = async (menuItemId, currentStatus) => {
+  const handleToggleMenu = async (id, currentStatus) => {
     try {
-      const res = await fetch(`${API_URL}/chef/menu/toggle`, {
-        method: 'PUT',
+      const res = await fetch(`${API_URL}/manager/menu/toggle-sold-out`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ menuItemId: menuItemId, isAvailable: !currentStatus })
+        body: JSON.stringify({ id, isSoldOut: !currentStatus })
       });
       if (res.ok) fetchMenu(); 
       else alert("Không thể cập nhật trạng thái món!");
@@ -188,12 +170,12 @@ function Chef({ socket }) {
           <p style={{ color: '#bdc3c7' }}>Khi bạn báo Hết món, món ăn sẽ tự động bị báo Sold Out trên toàn bộ Tablet của khách hàng.</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
             {menuItems.map(mon => (
-              <div key={mon._id} style={{ backgroundColor: 'white', color: 'black', padding: '15px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: mon.isAvailable ? 1 : 0.6 }}>
+              <div key={mon._id} style={{ backgroundColor: 'white', color: 'black', padding: '15px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: mon.isSoldOut ? 0.6 : 1 }}>
                 <img src={mon.image || 'https://via.placeholder.com/100'} alt={mon.name} style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '50%', marginBottom: '10px' }} />
                 <h3 style={{ margin: '0 0 5px 0', textAlign: 'center', fontSize: '18px' }}>{mon.name}</h3>
                 <span style={{ color: 'gray', fontSize: '13px', marginBottom: '15px' }}>({mon.category})</span>
-                <button onClick={() => handleToggleMenu(mon._id, mon.isAvailable)} style={{ padding: '10px 20px', width: '100%', backgroundColor: mon.isAvailable ? '#27ae60' : '#c0392b', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}>
-                  {mon.isAvailable ? '✅ ĐANG CÒN HÀNG' : '❌ ĐÃ HẾT MÓN'}
+                <button onClick={() => handleToggleMenu(mon._id, mon.isSoldOut)} style={{ padding: '10px 20px', width: '100%', backgroundColor: mon.isSoldOut ? '#c0392b' : '#27ae60', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px' }}>
+                  {mon.isSoldOut ? '❌ ĐÃ HẾT MÓN' : '✅ ĐANG CÒN HÀNG'}
                 </button>
               </div>
             ))}
